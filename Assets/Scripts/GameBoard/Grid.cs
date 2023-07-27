@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private enum FigureType
     {
-        
+        Normal,
+        Count
     }
 
-    // Update is called once per frame
-    void Update()
+    [System.Serializable]
+    private struct FigurePrefab
     {
-        
+        private FigureType type;
+        private GameObject prefab;
     }
+
+    public 
 }
