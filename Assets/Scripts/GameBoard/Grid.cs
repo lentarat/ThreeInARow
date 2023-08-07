@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,6 +30,11 @@ public class Grid : MonoBehaviour
     [SerializeField] private GameObject _backgroundCellPrefab;
 
     private GameObject[,] _figures;
+    public GameObject[,] Figures 
+    {
+        get => _figures;
+        //set => _figures = value;
+    }
     private Vector2 _centeredGridInWorldPosition;
 
     private void Awake()

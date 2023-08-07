@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
         private set => _instance = value;
     }
 
+    [Header("Common")]
     [SerializeField] private float _roundTime;
 
     private float _timeLeft;
