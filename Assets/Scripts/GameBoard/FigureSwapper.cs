@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class FigureSwapper : MonoBehaviour
 {
+    [Header("Dependencies")]
     [SerializeField] private InputHandler _inputHandler;
-
     [SerializeField] private Grid _grid;
+
+    [Header("Common")]
+    [SerializeField] private float _swapSpeed;
 
     public event System.Action OnFiguresSwapped;
 
@@ -61,14 +64,42 @@ public class FigureSwapper : MonoBehaviour
 
     private void OnDeltaHandler(Vector2 mouseDelta)
     {
-        if (LastTouchWasOnFigure() && !_areFiguresSwapping)
+        Vector2 pullDirection = GetPullDirection(mouseDelta);
+
+        Debug.Log(pullDirection);
+
+        if (LastTouchWasOnFigure() && FitsInArrayBoundaries(pullDirection) && !_areFiguresSwapping)
         {
-            Debug.Log(mouseDelta.normalized);
+            _touchedFigure = null;
+            _areFiguresSwapping = true;
 
-            //_touchedFigure = null;
-            //_areFiguresSwapping = true;
+            SwapFigures(_touchedFigureArrayIndex, pullDirection);
+        }
+    }
 
-            //SwapFigures(_touchedFigureArrayIndex, mouseDelta);
+    private Vector2 GetPullDirection(Vector2 mouseDelta)
+    {
+        float cellOffset = _grid.GetCellsOffset();
+
+        if (mouseDelta.x > 0f)
+        {
+            return new Vector2(cellOffset, 0f);
+        }
+        else if (mouseDelta.x < 0f)
+        {
+            return new Vector2(-cellOffset, 0f);
+        }
+        else if (mouseDelta.y > 0f)
+        {
+            return new Vector2(0f, cellOffset);
+        }
+        else if (mouseDelta.y < 0f)
+        {
+            return new Vector2(0f, -cellOffset);
+        }
+        else
+        {
+            return Vector2.zero;
         }
     }
 
@@ -84,9 +115,32 @@ public class FigureSwapper : MonoBehaviour
         }
     }
 
-    public void SwapFigures(Vector2 chosenFigureArrayIndex, Vector2 direction)
+    private bool FitsInArrayBoundaries(Vector2 pullDirection)
     {
-        direction = Vector2.up;
+        if (pullDirection.x > 0f && _touchedFigureArrayIndex.x >= _grid.Figures.GetUpperBound(0))
+        {
+            return false;
+        }
+        else if (pullDirection.x < 0f && _touchedFigureArrayIndex.x <= 0)
+        {
+            return false;
+        }
+        else if (pullDirection.y > 0f && _touchedFigureArrayIndex.y >= _grid.Figures.GetUpperBound(1))
+        {
+            return false;
+        }
+        else if (pullDirection.y < 0f && _touchedFigureArrayIndex.y <= 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private void SwapFigures(Vector2 chosenFigureArrayIndex, Vector2 direction)
+    {
         Vector2 figuredToBeSwappedIndex = new Vector2(chosenFigureArrayIndex.x + direction.x, chosenFigureArrayIndex.y + direction.y);
 
         GameObject figureChosen = _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y].Prefab;
@@ -106,10 +160,10 @@ public class FigureSwapper : MonoBehaviour
 
         while (figureChosen.transform.position != figureToBeSwappedPosition)
         {
-            figureChosen.transform.position = Vector3.Lerp(figureChosenPosition, figureToBeSwappedPosition, blendValue * 0.5f);
-            figureToBeSwapped.transform.position = Vector3.Lerp(figureToBeSwappedPosition, figureChosenPosition, blendValue * 0.5f);
+            figureChosen.transform.position = Vector3.Lerp(figureChosenPosition, figureToBeSwappedPosition, blendValue);
+            figureToBeSwapped.transform.position = Vector3.Lerp(figureToBeSwappedPosition, figureChosenPosition, blendValue);
 
-            blendValue += Time.deltaTime;
+            blendValue += _swapSpeed * Time.deltaTime;
 
             yield return null;
         }

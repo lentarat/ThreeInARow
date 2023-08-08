@@ -310,7 +310,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -327,8 +327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0b084e7220c764f83f63294d8ca256, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _xDim: 5
-  _yDim: 6
+  _xDim: 4
+  _yDim: 5
   _figurePrefabs:
   - Type: 0
     Prefab: {fileID: 3326579621892334205, guid: f96c6de353fd4904995bc5216d1d4d7e, type: 3}
@@ -355,6 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputHandler: {fileID: 1276550140}
   _grid: {fileID: 1826268438}
+  _swapSpeed: 2
 --- !u!1 &1834351026
 GameObject:
   m_ObjectHideFlags: 0

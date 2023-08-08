@@ -44,6 +44,25 @@ public class Grid : MonoBehaviour
         InitializeFigures();
     }
 
+    public float GetCellsOffset()
+    {
+        if (_xDim >= 2)
+        {
+            return Mathf.Abs( (_figures[0, 0].transform.position - _figures[1, 0].transform.position).x);
+        }
+        else
+        {
+            if (_yDim >= 2)
+            {
+                return Mathf.Abs((_figures[0, 0].transform.position - _figures[0, 1].transform.position).y);
+            }
+            else
+            {
+                return 0f;
+            }
+        }
+    }
+
     private void CenterTheGrid()
     {
         _centeredGridInWorldPosition = new Vector2(transform.position.x - _xDim / 2f + 0.5f, transform.position.y - _yDim / 2f + 0.5f);
@@ -105,109 +124,3 @@ public class Grid : MonoBehaviour
         return (FigureType)randomFigureTypeNumber;
     }
 }
-
-
-
-
-
-
-//using System.Collections.Generic;
-//using UnityEngine;
-
-//public class Grid : MonoBehaviour
-//{
-//    private enum FigureType
-//    {
-//        Octagon,
-//        Pentagon,
-//        Triangle,
-//        Quad,
-//        Circle,
-//        Count
-//    }
-
-//    [System.Serializable]
-//    private struct FigurePrefab
-//    {
-//        public FigureType Type;
-//        public GameObject Prefab;
-//    }
-
-//    [Header("Grid Size")]
-//    [SerializeField] private int _xDim;
-//    [SerializeField] private int _yDim;
-
-//    private Dictionary<FigureType, GameObject> _piecePrefabDictionary = new Dictionary<FigureType, GameObject>();
-//    [Header("Figure & Background Cell Prefabs")]
-//    [SerializeField] private FigurePrefab[] _figurePrefabs;
-//    [SerializeField] private GameObject _backgroundCellPrefab;
-
-//    private GameObject[,] _figures;
-//    public GameObject[,] Figures 
-//    {
-//        get => _figures;
-//        //set => _figures = value;
-//    }
-//    private Vector2 _centeredGridInWorldPosition;
-
-//    private void Awake()
-//    {
-//        CenterTheGrid();
-//        CopyFigureArrayToDictionary();
-//        InitializeGridBackgroundCells();
-//        InitializeFigures();
-//    }
-
-//    private void CenterTheGrid()
-//    {
-//        _centeredGridInWorldPosition = new Vector2(transform.position.x - _xDim / 2f + 0.5f, transform.position.y - _yDim / 2f + 0.5f);
-//    }
-
-//    private void CopyFigureArrayToDictionary() 
-//    {
-//        for (int i = 0; i < _figurePrefabs.Length; i++)
-//        {
-//            if (_piecePrefabDictionary.ContainsKey(_figurePrefabs[i].Type) == false)
-//            {
-//                _piecePrefabDictionary.Add(_figurePrefabs[i].Type, _figurePrefabs[i].Prefab);
-//            }
-//        }
-//    }
-
-//    private void InitializeGridBackgroundCells()
-//    {
-//        for (int x = 0; x < _xDim; x++)
-//        {
-//            for (int y = 0; y < _yDim; y++)
-//            {
-//                Vector2 backgroundCellOffset = new Vector3(x, y);
-//                Instantiate(_backgroundCellPrefab, _centeredGridInWorldPosition + backgroundCellOffset, Quaternion.identity, transform);
-//            }
-//        }
-//    }
-
-//    private void InitializeFigures()
-//    {
-//        _figures = new GameObject[_xDim, _yDim];
-
-//        for (int x = 0; x < _xDim; x++)
-//        {
-//            for (int y = 0; y < _yDim; y++)
-//            {
-//                Vector2 figureOffset = new Vector3(x, y);
-
-//                GameObject randomFigureToBeInstantiated;
-//                _piecePrefabDictionary.TryGetValue( GetRandomFigureType(), out randomFigureToBeInstantiated);
-
-//                _figures [x, y] = Instantiate(randomFigureToBeInstantiated, _centeredGridInWorldPosition + figureOffset, Quaternion.identity, transform);
-//                _figures[x, y].name = $"Figure at x:{x} y:{y}"; 
-//            }
-//        }
-//    }
-
-//    private FigureType GetRandomFigureType()
-//    {
-//        int randomFigureTypeNumber = Random.Range(0, (int)FigureType.Count);
-//        return (FigureType)randomFigureTypeNumber;
-//    }
-//}
