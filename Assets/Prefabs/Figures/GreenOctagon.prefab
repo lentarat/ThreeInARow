@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2147412079374049461}
   - component: {fileID: 6645685922221066258}
+  - component: {fileID: -1941932538693146284}
+  - component: {fileID: 6900552603486913842}
   m_Layer: 0
   m_Name: GreenOctagon
   m_TagString: Untagged
@@ -84,3 +86,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-1941932538693146284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3326579621892334205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00594e52bad30b34fa04faf1bcb2857c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ArrayIndex: {x: 0, y: 0}
+  Prefab: {fileID: 0}
+--- !u!65 &6900552603486913842
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3326579621892334205}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.85333335, y: 0.85333335, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}

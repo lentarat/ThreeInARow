@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class InputHandler : MonoBehaviour
 {
+    public event System.Action<Vector2> OnTouch;
+    public event System.Action<Vector2> OnDelta;
+
     private PlayerInputActions _playerInputActions;
 
     private InputAction _touch;
@@ -34,11 +38,15 @@ public class InputHandler : MonoBehaviour
 
     private void HandleTouch(InputAction.CallbackContext context)
     {
-        Debug.Log(_touch.ReadValue<Vector2>());
+        Vector2 mousePosition = _touch.ReadValue<Vector2>();
+
+        OnTouch?.Invoke(mousePosition);
     }
 
     private void HandleDelta(InputAction.CallbackContext context)
     {
-        Debug.Log(_delta.ReadValue<Vector2>());
+        Vector2 mouseDelta = _delta.ReadValue<Vector2>();
+
+        OnDelta?.Invoke(mouseDelta);
     }
 }
