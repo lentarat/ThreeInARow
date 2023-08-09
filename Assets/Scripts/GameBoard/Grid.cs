@@ -23,6 +23,8 @@ public class Grid : MonoBehaviour
     [Header("Grid Size")]
     [SerializeField] private int _xDim;
     [SerializeField] private int _yDim;
+    [SerializeField] private float _cellsOffsetMultiplier;
+
 
     private Dictionary<FigureType, GameObject> _piecePrefabDictionary = new Dictionary<FigureType, GameObject>();
     [Header("Figure & Background Cell Prefabs")]
@@ -39,28 +41,13 @@ public class Grid : MonoBehaviour
     private void Awake()
     {
         CenterTheGrid();
+
         CopyFigurePrefabsArrayToDictionary();
+
         InitializeGridBackgroundCells();
         InitializeFigures();
-    }
 
-    public float GetCellsOffset()
-    {
-        if (_xDim >= 2)
-        {
-            return Mathf.Abs( (_figures[0, 0].transform.position - _figures[1, 0].transform.position).x);
-        }
-        else
-        {
-            if (_yDim >= 2)
-            {
-                return Mathf.Abs((_figures[0, 0].transform.position - _figures[0, 1].transform.position).y);
-            }
-            else
-            {
-                return 0f;
-            }
-        }
+        ResizeBoardAccordingToScreenSize();
     }
 
     private void CenterTheGrid()
@@ -123,4 +110,28 @@ public class Grid : MonoBehaviour
         int randomFigureTypeNumber = Random.Range(0, (int)FigureType.Count);
         return (FigureType)randomFigureTypeNumber;
     }
+
+    private void ResizeBoardAccordingToScreenSize()
+    {
+        gameObject.transform.localScale *= _cellsOffsetMultiplier;
+    }
+
+    //public float GetCellsOffset()
+    //{
+    //    if (_xDim >= 2)
+    //    {
+    //        return Mathf.Abs( (_figures[0, 0].transform.position - _figures[1, 0].transform.position).x);
+    //    }
+    //    else
+    //    {
+    //        if (_yDim >= 2)
+    //        {
+    //            return Mathf.Abs((_figures[0, 0].transform.position - _figures[0, 1].transform.position).y);
+    //        }
+    //        else
+    //        {
+    //            return 0f;
+    //        }
+    //    }
+    //}
 }

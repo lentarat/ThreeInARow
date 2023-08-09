@@ -64,38 +64,34 @@ public class FigureSwapper : MonoBehaviour
 
     private void OnDeltaHandler(Vector2 mouseDelta)
     {
-        Vector2 pullDirection = GetPullDirection(mouseDelta);
+        Vector2 figureOffsetToBeSwappedIndex = GetFigureOffsetToBeSwappedArrayIndex(mouseDelta);
 
-        Debug.Log(pullDirection);
-
-        if (LastTouchWasOnFigure() && FitsInArrayBoundaries(pullDirection) && !_areFiguresSwapping)
+        if (LastTouchWasOnFigure() && FitsInArrayBoundaries(figureOffsetToBeSwappedIndex) && !_areFiguresSwapping)
         {
             _touchedFigure = null;
             _areFiguresSwapping = true;
 
-            SwapFigures(_touchedFigureArrayIndex, pullDirection);
+            SwapFigures(_touchedFigureArrayIndex, figureOffsetToBeSwappedIndex);
         }
     }
 
-    private Vector2 GetPullDirection(Vector2 mouseDelta)
+    private Vector2 GetFigureOffsetToBeSwappedArrayIndex(Vector2 mouseDelta)
     {
-        float cellOffset = _grid.GetCellsOffset();
-
         if (mouseDelta.x > 0f)
         {
-            return new Vector2(cellOffset, 0f);
+            return Vector2.right;
         }
         else if (mouseDelta.x < 0f)
         {
-            return new Vector2(-cellOffset, 0f);
+            return Vector2.left;
         }
         else if (mouseDelta.y > 0f)
         {
-            return new Vector2(0f, cellOffset);
+            return Vector2.up;
         }
         else if (mouseDelta.y < 0f)
         {
-            return new Vector2(0f, -cellOffset);
+            return Vector2.down;
         }
         else
         {
@@ -139,14 +135,14 @@ public class FigureSwapper : MonoBehaviour
         }
     }
 
-    private void SwapFigures(Vector2 chosenFigureArrayIndex, Vector2 direction)
+    private void SwapFigures(Vector2 chosenFigureArrayIndex, Vector2 figureOffsetToBeSwappedIndex)
     {
-        Vector2 figuredToBeSwappedIndex = new Vector2(chosenFigureArrayIndex.x + direction.x, chosenFigureArrayIndex.y + direction.y);
+        Vector2 figureToBeSwappedIndex = new Vector2(chosenFigureArrayIndex.x + figureOffsetToBeSwappedIndex.x, chosenFigureArrayIndex.y + figureOffsetToBeSwappedIndex.y);
 
         GameObject figureChosen = _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y].Prefab;
-        GameObject figureToBeSwapped = _grid.Figures[(int)figuredToBeSwappedIndex.x, (int)figuredToBeSwappedIndex.y].Prefab;
+        GameObject figureToBeSwapped = _grid.Figures[(int)figureToBeSwappedIndex.x, (int)figureToBeSwappedIndex.y].Prefab;
 
-        StartCoroutine(SwapTheFigures(figureChosen, figureToBeSwapped, chosenFigureArrayIndex, figuredToBeSwappedIndex));
+        StartCoroutine(SwapTheFigures(figureChosen, figureToBeSwapped, chosenFigureArrayIndex, figureToBeSwappedIndex));
 
         OnFiguresSwapped?.Invoke();
     }
@@ -185,4 +181,31 @@ public class FigureSwapper : MonoBehaviour
         _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y].ArrayIndex = _grid.Figures[(int)figuredToBeSwappedIndex.x, (int)figuredToBeSwappedIndex.y].ArrayIndex;
         _grid.Figures[(int)figuredToBeSwappedIndex.x, (int)figuredToBeSwappedIndex.y].ArrayIndex = tempArrayIndex;
     }
+
+
+    //private Vector2 GetPullDirection(Vector2 mouseDelta)
+    //{
+    //    float cellOffset = _grid.GetCellsOffset();
+
+    //    if (mouseDelta.x > 0f)
+    //    {
+    //        return new Vector2(cellOffset, 0f);
+    //    }
+    //    else if (mouseDelta.x < 0f)
+    //    {
+    //        return new Vector2(-cellOffset, 0f);
+    //    }
+    //    else if (mouseDelta.y > 0f)
+    //    {
+    //        return new Vector2(0f, cellOffset);
+    //    }
+    //    else if (mouseDelta.y < 0f)
+    //    {
+    //        return new Vector2(0f, -cellOffset);
+    //    }
+    //    else
+    //    {
+    //        return Vector2.zero;
+    //    }
+    //}
 }
