@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    private enum FigureType
+    public enum FigureType
     {
         Octagon,
         Pentagon,
@@ -89,15 +89,16 @@ public class Grid : MonoBehaviour
                 Vector2 figureOffset = new Vector3(x, y);
 
                 GameObject randomFigureToBeInstantiated;
-                _piecePrefabDictionary.TryGetValue(GetRandomFigureType(), out randomFigureToBeInstantiated);
+                FigureType randomFigureType = GetRandomFigureType();
+                _piecePrefabDictionary.TryGetValue(randomFigureType, out randomFigureToBeInstantiated);
 
                 GameObject instantiatedFigure = Instantiate(randomFigureToBeInstantiated, _centeredGridInWorldPosition + figureOffset, Quaternion.identity, transform);
 
-                instantiatedFigure.name = $"Figure at x:{x} y:{y}";
+                //instantiatedFigure.name = $"Figure at x:{x} y:{y}";
 
                 Figure figure = instantiatedFigure.GetComponent<Figure>();
 
-                figure.Prefab = instantiatedFigure;
+                figure.FigureType = randomFigureType;
                 figure.ArrayIndex = new Vector2(x, y);
 
                 _figures[x, y] = figure;

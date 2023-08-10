@@ -18,15 +18,24 @@ public class GameManager : MonoBehaviour
 
     private float _timeLeft;
 
+    public enum GameState
+    {
+        Idle,
+        FiguresSwapping,
+        FiguresFalling
+    }
+
+    private GameState _currentGameState;
+    public GameState CurrentGameState
+    {
+        get => _currentGameState;
+        set => _currentGameState = value;
+    }
+
     private void Awake()
     {
         Instance = this;
 
-        LoadFirstLevel();
-    }
-    private void LoadFirstLevel()
-    {
-        
     }
 
     private void Update()
@@ -34,10 +43,7 @@ public class GameManager : MonoBehaviour
         _timeLeft = _roundTime - Time.time;
     }
 
-    private void LoadFirst()
-    {
-        
-    }
+    
 
     public float GetTimeLeft()
     {

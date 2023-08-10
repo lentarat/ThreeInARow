@@ -16,8 +16,6 @@ public class FigureSwapper : MonoBehaviour
     private Figure _touchedFigure;
     private Vector2 _touchedFigureArrayIndex;
 
-    private bool _areFiguresSwapping;
-
     private void OnEnable()
     {
         _inputHandler.OnTouch += OnTouchHandler;
@@ -66,10 +64,12 @@ public class FigureSwapper : MonoBehaviour
     {
         Vector2 figureOffsetToBeSwappedIndex = GetFigureOffsetToBeSwappedArrayIndex(mouseDelta);
 
-        if (LastTouchWasOnFigure() && FitsInArrayBoundaries(figureOffsetToBeSwappedIndex) && !_areFiguresSwapping)
+        if (LastTouchWasOnFigure() &&
+            FitsInArrayBoundaries(figureOffsetToBeSwappedIndex) &&
+            GameManager.Instance.CurrentGameState == GameManager.GameState.Idle)
         {
             _touchedFigure = null;
-            _areFiguresSwapping = true;
+            GameManager.Instance.CurrentGameState = GameManager.GameState.FiguresSwapping;
 
             SwapFigures(_touchedFigureArrayIndex, figureOffsetToBeSwappedIndex);
         }
@@ -139,18 +139,16 @@ public class FigureSwapper : MonoBehaviour
     {
         Vector2 figureToBeSwappedIndex = new Vector2(chosenFigureArrayIndex.x + figureOffsetToBeSwappedIndex.x, chosenFigureArrayIndex.y + figureOffsetToBeSwappedIndex.y);
 
-        GameObject figureChosen = _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y].Prefab;
-        GameObject figureToBeSwapped = _grid.Figures[(int)figureToBeSwappedIndex.x, (int)figureToBeSwappedIndex.y].Prefab;
+        Transform figureChosenTransform = _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y].transform;
+        Transform figureToBeSwappedTransform = _grid.Figures[(int)figureToBeSwappedIndex.x, (int)figureToBeSwappedIndex.y].transform;
 
-        StartCoroutine(SwapTheFigures(figureChosen, figureToBeSwapped, chosenFigureArrayIndex, figureToBeSwappedIndex));
-
-        OnFiguresSwapped?.Invoke();
+        StartCoroutine(SwapTheFigures(figureChosenTransform, figureToBeSwappedTransform, chosenFigureArrayIndex, figureToBeSwappedIndex));
     }
 
-    private IEnumerator SwapTheFigures(GameObject figureChosen, GameObject figureToBeSwapped, Vector2 chosenFigureArrayIndex, Vector2 figuredToBeSwappedIndex)
+    private IEnumerator SwapTheFigures(Transform figureChosen, Transform figureToBeSwapped, Vector2 chosenFigureArrayIndex, Vector2 figuredToBeSwappedIndex)
     {
-        Vector3 figureChosenPosition = figureChosen.transform.position;
-        Vector3 figureToBeSwappedPosition = figureToBeSwapped.transform.position;
+        Vector3 figureChosenPosition = figureChosen.position;
+        Vector3 figureToBeSwappedPosition = figureToBeSwapped.position;
 
         float blendValue = 0f;
 
@@ -166,7 +164,9 @@ public class FigureSwapper : MonoBehaviour
 
         SwapTheFiguresInArray(chosenFigureArrayIndex, figuredToBeSwappedIndex);
 
-        _areFiguresSwapping = false;
+        GameManager.Instance.CurrentGameState = GameManager.GameState.Idle;
+
+        OnFiguresSwapped?.Invoke();
 
         yield return null;
     }

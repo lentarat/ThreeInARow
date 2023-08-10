@@ -5,5 +5,5 @@ using UnityEngine;
 public class Figure : MonoBehaviour
 {
     public Vector2 ArrayIndex;
-    public GameObject Prefab;
+    public Grid.FigureType FigureType;
 }
