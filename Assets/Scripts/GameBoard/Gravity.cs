@@ -9,7 +9,16 @@ public class Gravity : MonoBehaviour
     [SerializeField] private FigureDestroyer _figureDestroyer;
     [SerializeField] private FigureSpawner _figureSpawner;
 
-    private List<Figure> _listOfFiguresToBeAffectedByGravity = new List<Figure>();
+    [Header("Common")]
+    [SerializeField] private float _fallSpeed;
+
+    private List<Figure> _figuresToFall = new List<Figure>();
+    private float _cellOffset;
+
+    private void Start()
+    {
+        _cellOffset = _grid.GetCellsOffset();
+    }
 
     private void OnEnable()
     {
@@ -28,20 +37,28 @@ public class Gravity : MonoBehaviour
         int xMax = _grid.Figures.GetUpperBound(0);
         int yMax = _grid.Figures.GetUpperBound(1);
 
-        for (int x = 0; x < xMax; x++)
+        for (int x = 0; x <= xMax; x++)
         {
-            for (int y = 0; y < yMax; y++)
+            for (int y = 0; y <= yMax; y++)
             {
                 if (IsOccupiedByFigure(x, y) == false)
                 {
-                    Figure figureToBeAffectedByGravity = GetTheClosestFigureOnY(x, y, yMax);                       
+                    Vector2 theUpperFigurePosition = new Vector2(x, _grid.GetFigureMaxYPositionAt(x) /*_grid.GetTheHighestCellYPosition()*/);
+
+                    Figure spawnedFigureAboveTheGrid = SpawnAFigureAboveTheGridAtPosition(theUpperFigurePosition.x, theUpperFigurePosition.y + _cellOffset);
+                    _figuresToFall.Add(spawnedFigureAboveTheGrid);
+
+                    AddFiguresWhichAreAboveToFallList(x, y, yMax);
                 }
-                GetFigureIfOccupied(x, y);
                 if (_grid.Figures[x, y] == null)
                 {
-                    Debug.Log("null is at " + x + " " + y);
                 }
             }
+        }
+
+        if (_figuresToFall.Count > 0)
+        {
+            StartCoroutine(ApplyGravityToFigures());
         }
 
         GameManager.Instance.CurrentGameState = GameManager.GameState.Idle;
@@ -52,21 +69,66 @@ public class Gravity : MonoBehaviour
         return _grid.Figures[x, y] != null;
     }
 
-    private Figure GetTheClosestFigureOnY(int x, int y, int yMax)
+    private void AddFiguresWhichAreAboveToFallList(int x, int y, int yMax)
     {
-        for (int yIndex = y; yIndex <= yMax; yIndex++)
+        float figureAboveTheGridOffset = _cellOffset;
+        Vector2 theUpperFigurePosition = new Vector2(x, _grid.GetFigureMaxYPositionAt(x)); 
+
+        for (int yIndex = y + 1; yIndex <= yMax; yIndex++)
         {
-            if (_grid.Figures[x, y] != null)
+            if (_grid.Figures[x, yIndex] == null)
             {
-                return _grid.Figures[x, y];
+                figureAboveTheGridOffset += _cellOffset;
+
+
+                Figure spawnedFigureAboveTheGrid = SpawnAFigureAboveTheGridAtPosition(theUpperFigurePosition.x, theUpperFigurePosition.y + figureAboveTheGridOffset);
+                _figuresToFall.Add(spawnedFigureAboveTheGrid);
+            }
+            else
+            {
+                _figuresToFall.Add(_grid.Figures[x, yIndex]);
             }
         }
-
-        return SpawnAFigureBeyondTheGrid();
     }
 
-    private Figure SpawnAFigureBeyondTheGrid()
+    //private Figure GetTheClosestFigureOnY(int x, int y, int yMax)
+    //{
+    //    for (int yIndex = y + 1; yIndex <= yMax; yIndex++)
+    //    {
+    //        if (_grid.Figures[x, yIndex] != null)
+    //        {
+    //            return _grid.Figures[x, y];
+    //        }
+    //    }
+
+    //    Vector3 upperFigurePosition = _grid.Figures[x, yMax].transform.position;
+
+    //    return SpawnAFigureAboveTheGrid(upperFigurePosition.x, upperFigurePosition.y + _cellOffset);
+    //}
+
+    private Figure SpawnAFigureAboveTheGridAtPosition(float x, float y)
     {
-        
+        return _figureSpawner.SpawnAFigureAtPosition(x, y);
+    }
+
+    private IEnumerator ApplyGravityToFigures()
+    {
+        float pathPassed = 0;
+
+        while (pathPassed < _cellOffset)
+        {
+            foreach (Figure figure in _figuresToFall)
+            {
+                figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed, 0f);
+                
+                Debug.Log("Gravity " + pathPassed + " " + _figuresToFall.Count);
+            }
+
+            pathPassed += Time.deltaTime * _fallSpeed;
+
+            yield return null;
+        }
+
+        yield return null;
     }
 }

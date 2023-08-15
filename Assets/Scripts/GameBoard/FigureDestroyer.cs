@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +21,8 @@ public class FigureDestroyer : MonoBehaviour
 
     private void DestroyFiguresIfThreeOrMoreInARow()
     {
+        Debug.LogWarning("Destroying");
+
         List<Figure> _figuresInARowToDestroy = new List<Figure>();
 
         for (int x = 0; x <= _grid.Figures.GetUpperBound(0); x++)
@@ -35,13 +36,15 @@ public class FigureDestroyer : MonoBehaviour
                         if (figure != null)
                         {
                             Destroy(figure.gameObject);
-                            _grid.Figures[x, y] = null;
+                            Vector2 figureArrayIndex = figure.ArrayIndex;
+                            _grid.Figures[(int)figureArrayIndex.x, (int)figureArrayIndex.y] = null;
                         }
                     }
 
                     OnFigureDestroyed?.Invoke();
+
+                    return;
                 }
-                Debug.Log(x + " " + y);
             }
         }
     }
@@ -56,6 +59,7 @@ public class FigureDestroyer : MonoBehaviour
         {
             if (_grid.Figures[i, y].FigureType == _grid.Figures[i + 1, y].FigureType)
             {
+                Debug.Log(x + " " + y);
                 inARow++;
             }
             else
@@ -96,8 +100,6 @@ public class FigureDestroyer : MonoBehaviour
             }
             return true;
         }
-
-        Debug.Log(inARow);
 
         return false;
     }

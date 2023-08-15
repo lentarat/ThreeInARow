@@ -292,6 +292,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1826268437}
   - component: {fileID: 1826268438}
+  - component: {fileID: 1826268442}
   - component: {fileID: 1826268440}
   - component: {fileID: 1826268439}
   - component: {fileID: 1826268441}
@@ -329,20 +330,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0b084e7220c764f83f63294d8ca256, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _xDim: 4
-  _yDim: 5
+  _figureSpawner: {fileID: 1826268442}
+  _xDim: 3
+  _yDim: 4
   _cellsOffsetMultiplier: 1
-  _figurePrefabs:
-  - Type: 0
-    Prefab: {fileID: 3326579621892334205, guid: f96c6de353fd4904995bc5216d1d4d7e, type: 3}
-  - Type: 1
-    Prefab: {fileID: 2768969790764757472, guid: 20b61925c2c2aa74182d26ddde0921e2, type: 3}
-  - Type: 2
-    Prefab: {fileID: 7036643830763487768, guid: cc71a284ff5cdea4e95820fef9dcb319, type: 3}
-  - Type: 3
-    Prefab: {fileID: 4564546671868923246, guid: 85ae5bc5b4b4922499084b84a3dac866, type: 3}
-  - Type: 4
-    Prefab: {fileID: 2507113841130497851, guid: dd05d03d3e9b36e459d2b7de7461f6ab, type: 3}
   _backgroundCellPrefab: {fileID: 6275639240253089580, guid: e62cd8903fe09254dbae24b77ae76e88, type: 3}
 --- !u!114 &1826268439
 MonoBehaviour:
@@ -387,6 +378,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _grid: {fileID: 1826268438}
   _figureDestroyer: {fileID: 1826268440}
+  _figureSpawner: {fileID: 1826268442}
+  _fallSpeed: 1
+--- !u!114 &1826268442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826268435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e62a88f6dafca6e4fa258067f8a9c4fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _figurePrefabs:
+  - Type: 0
+    Prefab: {fileID: 3326579621892334205, guid: f96c6de353fd4904995bc5216d1d4d7e, type: 3}
+  - Type: 1
+    Prefab: {fileID: 2768969790764757472, guid: 20b61925c2c2aa74182d26ddde0921e2, type: 3}
+  - Type: 2
+    Prefab: {fileID: 7036643830763487768, guid: cc71a284ff5cdea4e95820fef9dcb319, type: 3}
+  - Type: 3
+    Prefab: {fileID: 4564546671868923246, guid: 85ae5bc5b4b4922499084b84a3dac866, type: 3}
+  - Type: 4
+    Prefab: {fileID: 2507113841130497851, guid: dd05d03d3e9b36e459d2b7de7461f6ab, type: 3}
 --- !u!1 &1834351026
 GameObject:
   m_ObjectHideFlags: 0
