@@ -43,15 +43,13 @@ public class Gravity : MonoBehaviour
             {
                 if (IsOccupiedByFigure(x, y) == false)
                 {
-                    Vector2 theUpperFigurePosition = new Vector2(x, _grid.GetFigureMaxYPositionAt(x) /*_grid.GetTheHighestCellYPosition()*/);
-
-                    Figure spawnedFigureAboveTheGrid = SpawnAFigureAboveTheGridAtPosition(theUpperFigurePosition.x, theUpperFigurePosition.y + _cellOffset);
+                    Figure spawnedFigureAboveTheGrid = SpawnAFigureAboveTheGridAtPosition(_grid.GetSpawnPointPosition(x));
                     _figuresToFall.Add(spawnedFigureAboveTheGrid);
 
-                    AddFiguresWhichAreAboveToFallList(x, y, yMax);
-                }
-                if (_grid.Figures[x, y] == null)
-                {
+                    if (AddFiguresWhichAreAboveToFallList(x, y, yMax))
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -69,46 +67,37 @@ public class Gravity : MonoBehaviour
         return _grid.Figures[x, y] != null;
     }
 
-    private void AddFiguresWhichAreAboveToFallList(int x, int y, int yMax)
+    //returns true if figures were created while adding gravitation to upper figures
+    private bool AddFiguresWhichAreAboveToFallList(int x, int y, int yMax)
     {
-        float figureAboveTheGridOffset = _cellOffset;
-        Vector2 theUpperFigurePosition = new Vector2(x, _grid.GetFigureMaxYPositionAt(x)); 
+        bool wereFiguresCreated = false;
 
+        float figureAboveTheGridOffset = _cellOffset;
+
+        Debug.Log(Time.time);
+        
         for (int yIndex = y + 1; yIndex <= yMax; yIndex++)
         {
             if (_grid.Figures[x, yIndex] == null)
             {
-                figureAboveTheGridOffset += _cellOffset;
-
-
-                Figure spawnedFigureAboveTheGrid = SpawnAFigureAboveTheGridAtPosition(theUpperFigurePosition.x, theUpperFigurePosition.y + figureAboveTheGridOffset);
+                Figure spawnedFigureAboveTheGrid = SpawnAFigureAboveTheGridAtPosition(_grid.GetSpawnPointPosition(x) + new Vector3(0f, figureAboveTheGridOffset, 0f));
                 _figuresToFall.Add(spawnedFigureAboveTheGrid);
+
+                figureAboveTheGridOffset += _cellOffset;
+                wereFiguresCreated = true;
             }
             else
             {
                 _figuresToFall.Add(_grid.Figures[x, yIndex]);
-            }
+            }   
         }
+
+        return wereFiguresCreated;
     }
 
-    //private Figure GetTheClosestFigureOnY(int x, int y, int yMax)
-    //{
-    //    for (int yIndex = y + 1; yIndex <= yMax; yIndex++)
-    //    {
-    //        if (_grid.Figures[x, yIndex] != null)
-    //        {
-    //            return _grid.Figures[x, y];
-    //        }
-    //    }
-
-    //    Vector3 upperFigurePosition = _grid.Figures[x, yMax].transform.position;
-
-    //    return SpawnAFigureAboveTheGrid(upperFigurePosition.x, upperFigurePosition.y + _cellOffset);
-    //}
-
-    private Figure SpawnAFigureAboveTheGridAtPosition(float x, float y)
+    private Figure SpawnAFigureAboveTheGridAtPosition(Vector2 position)
     {
-        return _figureSpawner.SpawnAFigureAtPosition(x, y);
+        return _figureSpawner.SpawnAFigureAtPosition(position, Vector2.zero);
     }
 
     private IEnumerator ApplyGravityToFigures()
@@ -120,8 +109,6 @@ public class Gravity : MonoBehaviour
             foreach (Figure figure in _figuresToFall)
             {
                 figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed, 0f);
-                
-                Debug.Log("Gravity " + pathPassed + " " + _figuresToFall.Count);
             }
 
             pathPassed += Time.deltaTime * _fallSpeed;

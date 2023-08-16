@@ -26,38 +26,36 @@ public class FigureSpawner : MonoBehaviour
     [SerializeField] private FigurePrefab[] _figurePrefabs;
 
     private Transform _gridTransform;
-    private Vector2 _centeredGridInWorldPosition;
+    //private Vector2 _centeredGridInWorldPosition;
 
     private void Awake()
     {
         CopyFigurePrefabsArrayToDictionary();
     }
 
-    public void SetCenteredGridInWorldPosition(Vector2 pos)
-    {
-        _centeredGridInWorldPosition = pos;
-    }
+    //public void SetCenteredGridInWorldPosition(Vector2 pos)
+    //{
+    //    _centeredGridInWorldPosition = pos;
+    //}
 
     public void SetGridTransform(Transform gridTransform)
     {
         _gridTransform = gridTransform;
     }
 
-    public Figure SpawnAFigureAtPosition(float x, float y)
+    public Figure SpawnAFigureAtPosition(Vector2 position, Vector2 centeredGridOffset)
     {
-        Vector2 figureOffset = new Vector3(x, y);
-
         GameObject randomFigureToBeInstantiated;
         FigureType randomFigureType = GetRandomFigureType();
         _piecePrefabDictionary.TryGetValue(randomFigureType, out randomFigureToBeInstantiated);
 
-        GameObject instantiatedFigureGameObject = Instantiate(randomFigureToBeInstantiated, _centeredGridInWorldPosition + figureOffset, Quaternion.identity);
+        GameObject instantiatedFigureGameObject = Instantiate(randomFigureToBeInstantiated, position + centeredGridOffset, Quaternion.identity);
         instantiatedFigureGameObject.transform.parent = _gridTransform;
 
         Figure instantiatedFigure = instantiatedFigureGameObject.GetComponent<Figure>();
 
         instantiatedFigure.FigureType = randomFigureType;
-        instantiatedFigure.ArrayIndex = new Vector2(x, y);
+        instantiatedFigure.ArrayIndex = new Vector2(position.x, position.y);
 
         return instantiatedFigure;
     }

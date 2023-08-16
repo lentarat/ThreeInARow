@@ -19,7 +19,7 @@ public class Grid : MonoBehaviour
     {
         get => _figures;
     }
-    private float[] _figuresMaxYPositions;
+    private Vector3[] _spawnPointsPositions;
     private Vector2 _centeredGridInWorldPosition;
 
     private void Start()
@@ -30,7 +30,7 @@ public class Grid : MonoBehaviour
 
         InitializeGridBackgroundCells();
         InitializeFigures();
-        RememberFiguresMaxYPositions();
+        CreateSpawnPointsAboveTheGrid();
 
         ResizeBoardAccordingToScreenSize();
     }
@@ -58,9 +58,14 @@ public class Grid : MonoBehaviour
         }
     }
 
-    public float GetFigureMaxYPositionAt(int xArrayIndex)
+    //public float GetFigureMaxYPositionAt(int xArrayIndex)
+    //{
+    //    return _figuresMaxYPositions[xArrayIndex];
+    //}
+
+    public Vector3 GetSpawnPointPosition(int xArrayIndex)
     {
-        return _figuresMaxYPositions[xArrayIndex];
+        return _spawnPointsPositions[xArrayIndex];  
     }
 
     private void CenterTheGrid()
@@ -70,7 +75,7 @@ public class Grid : MonoBehaviour
 
     private void PrepareFigureSpawner()
     {
-        _figureSpawner.SetCenteredGridInWorldPosition(_centeredGridInWorldPosition);
+        //_figureSpawner.SetCenteredGridInWorldPosition(_centeredGridInWorldPosition);
         _figureSpawner.SetGridTransform(transform);
     }
 
@@ -94,21 +99,37 @@ public class Grid : MonoBehaviour
         {
             for (int y = 0; y < _yDim; y++)
             {
-                Figure figure = _figureSpawner.SpawnAFigureAtPosition(x, y);
+                Figure figure = _figureSpawner.SpawnAFigureAtPosition(new Vector2(x, y), _centeredGridInWorldPosition);
                 _figures[x, y] = figure;
             }
         }
     }
 
-    private void RememberFiguresMaxYPositions()
+    private void CreateSpawnPointsAboveTheGrid()
     {
-        _figuresMaxYPositions = new float[_xDim];
+        GameObject spawnPoint = new GameObject();
+        Vector3 cellsOffset = new Vector3(0f, GetCellsOffset(), 0f);
+
+        _spawnPointsPositions = new Vector3[_xDim];
 
         for (int x = 0; x < _xDim; x++)
         {
-            _figuresMaxYPositions[x] = _figures[x, _yDim - 1].transform.position.y;
+            GameObject createdSpawnPoint = Instantiate(spawnPoint, _figures[x, _yDim - 1].transform.position + cellsOffset, Quaternion.identity);
+            _spawnPointsPositions[x] = createdSpawnPoint.transform.position;
         }
+
+        Destroy(spawnPoint);
     }
+
+    //private void RememberFiguresMaxYPositions()
+    //{
+    //    _figuresMaxYPositions = new float[_xDim];
+
+    //    for (int x = 0; x < _xDim; x++)
+    //    {
+    //        _figuresMaxYPositions[x] = _figures[x, _yDim - 1].transform.position.y;
+    //    }
+    //}
     private void ResizeBoardAccordingToScreenSize()
     {
         gameObject.transform.localScale *= _cellsOffsetMultiplier;
