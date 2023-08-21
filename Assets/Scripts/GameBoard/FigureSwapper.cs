@@ -5,27 +5,26 @@ using UnityEngine;
 public class FigureSwapper : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private Grid _grid;
 
     [Header("Common")]
     [SerializeField] private float _swapSpeed;
 
-    public event System.Action OnFiguresSwapped;
+    public static event System.Action OnFiguresSwapped;
 
     private Figure _touchedFigure;
     private Vector2 _touchedFigureArrayIndex;
 
     private void OnEnable()
     {
-        _inputHandler.OnTouch += OnTouchHandler;
-        _inputHandler.OnDelta += OnDeltaHandler;
+        InputHandler.OnTouch += OnTouchHandler;
+        InputHandler.OnDelta += OnDeltaHandler;
     }
 
     private void OnDisable()
     {
-        _inputHandler.OnTouch -= OnTouchHandler;
-        _inputHandler.OnDelta += OnDeltaHandler;
+        InputHandler.OnTouch -= OnTouchHandler;
+        InputHandler.OnDelta += OnDeltaHandler;
     }
 
     private void OnTouchHandler(Vector2 mousePosition)
@@ -173,13 +172,18 @@ public class FigureSwapper : MonoBehaviour
 
     private void SwapTheFiguresInArray(Vector2 chosenFigureArrayIndex, Vector2 figuredToBeSwappedIndex)
     {
-        Figure tempFigure = _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y];
-        _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y] = _grid.Figures[(int)figuredToBeSwappedIndex.x, (int)figuredToBeSwappedIndex.y];
-        _grid.Figures[(int)figuredToBeSwappedIndex.x, (int)figuredToBeSwappedIndex.y] = tempFigure;
+        int chosenArrayIndexX = (int)chosenFigureArrayIndex.x;
+        int chosenArrayIndexY = (int)chosenFigureArrayIndex.y;
+        int toBeSwappedArrayIndexX = (int)figuredToBeSwappedIndex.x;
+        int toBeSwappedArrayIndexY = (int)figuredToBeSwappedIndex.y;
 
-        Vector2 tempArrayIndex = _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y].ArrayIndex;
-        _grid.Figures[(int)chosenFigureArrayIndex.x, (int)chosenFigureArrayIndex.y].ArrayIndex = _grid.Figures[(int)figuredToBeSwappedIndex.x, (int)figuredToBeSwappedIndex.y].ArrayIndex;
-        _grid.Figures[(int)figuredToBeSwappedIndex.x, (int)figuredToBeSwappedIndex.y].ArrayIndex = tempArrayIndex;
+        Figure tempFigure = _grid.Figures[chosenArrayIndexX, chosenArrayIndexY];
+        _grid.Figures[chosenArrayIndexX, chosenArrayIndexY] = _grid.Figures[toBeSwappedArrayIndexX, toBeSwappedArrayIndexY];
+        _grid.Figures[toBeSwappedArrayIndexX, toBeSwappedArrayIndexY] = tempFigure;
+
+        Vector2 tempArrayIndex = _grid.Figures[chosenArrayIndexX, chosenArrayIndexY].ArrayIndex;
+        _grid.Figures[chosenArrayIndexX, chosenArrayIndexY].ArrayIndex = _grid.Figures[toBeSwappedArrayIndexX, toBeSwappedArrayIndexY].ArrayIndex;
+        _grid.Figures[toBeSwappedArrayIndexX, toBeSwappedArrayIndexY].ArrayIndex = tempArrayIndex;
     }
 
 

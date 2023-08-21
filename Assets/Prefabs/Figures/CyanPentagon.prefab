@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ArrayIndex: {x: 0, y: 0}
-  Prefab: {fileID: 0}
+  FigureType: 0
 --- !u!65 &-2827282003912088187
 BoxCollider:
   m_ObjectHideFlags: 0

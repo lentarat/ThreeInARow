@@ -5,8 +5,8 @@ using UnityEngine.InputSystem;
 
 public class InputHandler : MonoBehaviour
 {
-    public event System.Action<Vector2> OnTouch;
-    public event System.Action<Vector2> OnDelta;
+    public static event System.Action<Vector2> OnTouch;
+    public static event System.Action<Vector2> OnDelta;
 
     private PlayerInputActions _playerInputActions;
 

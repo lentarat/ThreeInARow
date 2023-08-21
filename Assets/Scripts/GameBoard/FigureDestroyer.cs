@@ -4,64 +4,79 @@ using UnityEngine;
 public class FigureDestroyer : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private FigureSwapper _figureSwapper;
     [SerializeField] private Grid _grid;
 
-    public event System.Action OnFigureDestroyed;
+    public static event System.Action OnFigureDestroyed;
 
     private void Awake()
     {
-        _figureSwapper.OnFiguresSwapped += HandleFiguresSwapped;    
+        FigureSwapper.OnFiguresSwapped += HandleFiguresSwapped;    
     }
 
     private void HandleFiguresSwapped()
     {
-        DestroyFiguresIfThreeOrMoreInARow();
+        DestroyFiguresIfThreeOrMoreConsistent();
     }
 
-    private void DestroyFiguresIfThreeOrMoreInARow()
+    private void DestroyFiguresIfThreeOrMoreConsistent()
     {
         List<Figure> _figuresInARowToDestroy = new List<Figure>();
 
-        for (int x = 0; x <= _grid.Figures.GetUpperBound(0); x++)
+        int xMax = _grid.XDim;
+        int yMax = _grid.YDim;
+
+        bool wereFiguresDestroyed = false;
+
+        for (int x = 0; x < xMax; x++)
         {
-            for (int y = 0; y <= _grid.Figures.GetUpperBound(1); y++)
+            for (int y = 0; y < yMax; y++)
             {
-                if (IsEnoughToDestroy(x, y, _figuresInARowToDestroy))
+                if (IsOccupiedByFigure(x, y) && AddToListThreeOrMoreFiguresConsistent(x, y, _figuresInARowToDestroy))
                 {
                     foreach (Figure figure in _figuresInARowToDestroy)
                     {
                         if (figure != null)
                         {
                             Destroy(figure.gameObject);
-                            Vector2 figureArrayIndex = figure.ArrayIndex;
-                            _grid.Figures[(int)figureArrayIndex.x, (int)figureArrayIndex.y] = null;
+                            wereFiguresDestroyed = true;
                         }
                     }
-
-                    OnFigureDestroyed?.Invoke();
-
-                    return;
+                }
+                if (IsOccupiedByFigure(x, y) == false)
+                {
+                    Debug.Log("null at " + x + " " + y);
                 }
             }
         }
+
+        if (wereFiguresDestroyed)
+        {
+            OnFigureDestroyed?.Invoke();
+        }
     }
 
-    private bool IsEnoughToDestroy(int x, int y, List<Figure> _figuresInARowToDestroy)
+    private bool IsOccupiedByFigure(int x, int y)
+    {
+        return _grid.Figures[x, y] != null;
+    }
+
+    private bool AddToListThreeOrMoreFiguresConsistent(int x, int y, List<Figure> _figuresInARowToDestroy)
     {
         int inARow = 1;
 
-        int xMax = _grid.Figures.GetUpperBound(0);
+        int xMax = _grid.XDim - 1;
 
         for (int i = x; i < xMax; i++)
         {
-            if (_grid.Figures[i, y].FigureType == _grid.Figures[i + 1, y].FigureType)
-            {
-                inARow++;
-            }
-            else
+            Figure figureOnTheRight = _grid.Figures[i + 1, y];
+
+            if (figureOnTheRight == null || _grid.Figures[i, y].FigureType != figureOnTheRight.FigureType)
             {
                 break;
+            }
+            else 
+            {
+                inARow++;
             }
         }
         if (inARow >= 3)
@@ -69,23 +84,26 @@ public class FigureDestroyer : MonoBehaviour
             for (int j = 0; j < inARow; j++)
             {
                 _figuresInARowToDestroy.Add(_grid.Figures[x + j, y]);
+                RemoveFigureInArray(x + j, y);
             }
             return true;
         }
 
         inARow = 1;
 
-        int yMax = _grid.Figures.GetUpperBound(1);
+        int yMax = _grid.YDim - 1;
 
         for (int i = y; i < yMax; i++)
         {
-            if (_grid.Figures[x, i].FigureType == _grid.Figures[x, i + 1].FigureType)
+            Figure figureFromAbove = _grid.Figures[x, i + 1];
+
+            if (figureFromAbove == null || _grid.Figures[x, i].FigureType != figureFromAbove.FigureType)
             {
-                inARow++;
+                break;
             }
             else
             {
-                break;
+                inARow++;
             }
         }
 
@@ -94,10 +112,16 @@ public class FigureDestroyer : MonoBehaviour
             for (int j = 0; j < inARow; j++)
             {
                 _figuresInARowToDestroy.Add(_grid.Figures[x, y + j]);
+                RemoveFigureInArray(x, y + j);
             }
             return true;
         }
 
         return false;
+    }
+
+    private void RemoveFigureInArray(int x, int y)
+    {
+        _grid.Figures[x, y] = null;
     }
 }

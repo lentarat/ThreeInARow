@@ -332,7 +332,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _figureSpawner: {fileID: 1826268442}
   _xDim: 3
-  _yDim: 7
+  _yDim: 5
   _cellsOffsetMultiplier: 1
   _backgroundCellPrefab: {fileID: 6275639240253089580, guid: e62cd8903fe09254dbae24b77ae76e88, type: 3}
 --- !u!114 &1826268439

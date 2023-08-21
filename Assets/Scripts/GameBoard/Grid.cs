@@ -8,7 +8,17 @@ public class Grid : MonoBehaviour
 
     [Header("Grid Size")]
     [SerializeField] private int _xDim;
+    public int XDim
+    {
+        get => _xDim;
+    }
+
     [SerializeField] private int _yDim;
+    public int YDim
+    {
+        get => _yDim;
+    }
+        
     [SerializeField] private float _cellsOffsetMultiplier;
 
     [Header("Background Cell Prefab")]
@@ -58,11 +68,6 @@ public class Grid : MonoBehaviour
         }
     }
 
-    //public float GetFigureMaxYPositionAt(int xArrayIndex)
-    //{
-    //    return _figuresMaxYPositions[xArrayIndex];
-    //}
-
     public Vector3 GetSpawnPointPosition(int xArrayIndex)
     {
         return _spawnPointsPositions[xArrayIndex];  
@@ -93,7 +98,7 @@ public class Grid : MonoBehaviour
 
     private void InitializeFigures()
     {
-        _figures = new Figure[_xDim, _yDim];
+        _figures = new Figure[_xDim, _yDim * 2]; // multiplication by two is caused due to extra space needed for figures above the grid
 
         for (int x = 0; x < _xDim; x++)
         {
