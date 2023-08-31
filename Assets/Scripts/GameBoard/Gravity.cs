@@ -137,25 +137,108 @@ public class Gravity : MonoBehaviour
 
     private IEnumerator ApplyGravityToFigures()
     {
-        float pathPassed = 0;
+        float pathPassed = 0f;
 
         while (_figuresToFall.Count != 0)
         {
             while (pathPassed < _cellOffset)
             {
-                foreach (Figure figure in _figuresToFall)
-                {
-                    figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed, 0f);
-                }
+                TranslatePositionEachFigureInFallListDown();
 
                 pathPassed += Time.deltaTime * _fallSpeed;
 
                 yield return null;
             }
 
+            pathPassed = 0f;
+
+            Debug.Log(_figuresToFall.Count);
+
+            RearrangeFigureArrayIndexes();
+
+            //int? firstFigureY = null;
+
+            //for (int i = 0; i < _figuresToFall.Count; i++)
+            //{
+            //    if (HasReachedTheLowestPoint(_figuresToFall[i]) || HasAnotherFigureBelow(_figuresToFall[i]) )
+            //    {
+            //        if (lastFigureY == null)
+            //        {
+            //            lastFigureY = (int)_figuresToFall[i].ArrayIndex.y;
+            //        }
+
+            //        RemoveFigure(_figuresToFall[i]);
+            //        i--;
+            //    }
+            //}
+            
+            //RemoveAFigureFromFallListIfBelowIsAnother();
+
             yield return null;
         }
         
         yield return null;
+    }
+
+    private bool HasReachedTheLowestPoint(Figure figure) => (int)figure.ArrayIndex.y <= 0;
+
+    private bool HasAnotherFigureBelow(Figure figure) => _grid.Figures[(int)figure.ArrayIndex.x, (int)figure.ArrayIndex.y - 1] != null;
+
+    private void RemoveFigure(Figure figure)
+    {
+        _figuresToFall.Remove(figure);
+    }
+
+    private void TranslatePositionEachFigureInFallListDown()
+    {
+        foreach (Figure figure in _figuresToFall)
+        {
+            figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed, 0f);
+        }
+    }
+
+    //private void RemoveAFigureFromFallListIfBelowIsAnother()
+    //{
+    //    for (int i = 0; i < _figuresToFall.Count; i++)
+    //    {
+    //        if (_figuresToFall[i].ArrayIndex.y > 0)
+    //        {
+    //            if (_grid.Figures[(int)_figuresToFall[i].ArrayIndex.x, (int)_figuresToFall[i].ArrayIndex.y - 1] != null)
+    //            {
+    //                _figuresToFall.Remove(_figuresToFall[i]);
+    //                i--;
+    //            }
+    //        }
+    //    }
+
+        //foreach (Figure figure in _figuresToFall)
+        //{
+        //    if (figure.ArrayIndex.y > 0)
+        //    {
+        //        if (_grid.Figures[(int)figure.ArrayIndex.x, (int)figure.ArrayIndex.y - 1] != null)
+        //        {
+        //            _figuresToFall.Remove(figure);
+        //        }
+        //    }
+        //}
+    //}
+
+    private void RearrangeFigureArrayIndexes()
+    {
+        foreach (Figure figure in _figuresToFall)
+        {
+            RearrangeRealArray(figure);
+
+            figure.ArrayIndex.y--;
+        }
+
+        void RearrangeRealArray(Figure figure)
+        {
+            int x = (int)figure.ArrayIndex.x;
+            int y = (int)figure.ArrayIndex.y;
+
+            _grid.Figures[x, y - 1] = _grid.Figures[x, y];
+            _grid.Figures[x, y] = null;
+        }
     }
 }
