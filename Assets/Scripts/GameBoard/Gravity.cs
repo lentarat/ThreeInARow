@@ -11,7 +11,6 @@ public class Gravity : MonoBehaviour
     [Header("Common")]
     [SerializeField] private float _fallSpeed;
 
-    public static event System.Action OnFiguresFellDown;
 
     private int _yArrayIndexOffset = 1;
     
@@ -69,6 +68,8 @@ public class Gravity : MonoBehaviour
             BubbleSortFiguresToFall();
             StartCoroutine(ApplyGravityToFigures());
         }
+
+        GameManager.Instance.CurrentGameState = GameManager.GameState.Idle;
     }
 
     private bool IsNotOccupiedByFigure(int x, int y)
@@ -155,41 +156,35 @@ public class Gravity : MonoBehaviour
 
             RearrangeFigureArrayIndexes();
 
-            for (int i = 0; i < _figuresToFall.Count; i++)
-            {
-                if (HasReachedTheLowestPoint(_figuresToFall[i]) || (HasAnotherFigureBelow(_figuresToFall[i])))
-                {
-                    RemoveFigureFromFallList(_figuresToFall[i]);
-                    i--;
-                }
-            }
+            //int? firstFigureY = null;
+
+            //for (int i = 0; i < _figuresToFall.Count; i++)
+            //{
+            //    if (HasReachedTheLowestPoint(_figuresToFall[i]) || HasAnotherFigureBelow(_figuresToFall[i]) )
+            //    {
+            //        if (lastFigureY == null)
+            //        {
+            //            lastFigureY = (int)_figuresToFall[i].ArrayIndex.y;
+            //        }
+
+            //        RemoveFigure(_figuresToFall[i]);
+            //        i--;
+            //    }
+            //}
+            
+            //RemoveAFigureFromFallListIfBelowIsAnother();
 
             yield return null;
         }
-
-        GameManager.Instance.CurrentGameState = GameManager.GameState.Idle;
-
-        OnFiguresFellDown?.Invoke();
-
+        
         yield return null;
     }
 
     private bool HasReachedTheLowestPoint(Figure figure) => (int)figure.ArrayIndex.y <= 0;
 
-    private bool HasAnotherFigureBelow(Figure figure) 
-    {
-        Figure figureBelow = _grid.Figures[(int)figure.ArrayIndex.x, (int)figure.ArrayIndex.y - 1];
+    private bool HasAnotherFigureBelow(Figure figure) => _grid.Figures[(int)figure.ArrayIndex.x, (int)figure.ArrayIndex.y - 1] != null;
 
-        if (figureBelow != null)
-        {
-            if (_figuresToFall.Contains(figureBelow) == false)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    private void RemoveFigureFromFallList(Figure figure)
+    private void RemoveFigure(Figure figure)
     {
         _figuresToFall.Remove(figure);
     }
