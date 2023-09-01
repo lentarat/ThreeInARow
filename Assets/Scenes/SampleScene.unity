@@ -347,9 +347,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 344e18629ba705a44883c58ea395d252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputHandler: {fileID: 1276550140}
   _grid: {fileID: 1826268438}
-  _swapSpeed: 2
+  _swapSpeed: 4
 --- !u!114 &1826268440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,7 +361,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87932cdefddcd2b4ab8b67016ce66be0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _figureSwapper: {fileID: 1826268439}
   _grid: {fileID: 1826268438}
 --- !u!114 &1826268441
 MonoBehaviour:
@@ -377,9 +375,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 1826268438}
-  _figureDestroyer: {fileID: 1826268440}
   _figureSpawner: {fileID: 1826268442}
-  _fallSpeed: 1
+  _fallSpeed: 3
 --- !u!114 &1826268442
 MonoBehaviour:
   m_ObjectHideFlags: 0
