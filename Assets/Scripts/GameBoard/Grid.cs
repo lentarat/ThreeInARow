@@ -29,6 +29,15 @@ public class Grid : MonoBehaviour
     {
         get => _figures;
     }
+
+    private float _cellsOffset;
+    public float CellsOffset 
+    {
+        get => _cellsOffset;
+    }
+
+    public static event System.Action OnGridReady;
+
     private Vector3[] _spawnPointsPositions;
     private Vector2 _centeredGridInWorldPosition;
 
@@ -40,32 +49,12 @@ public class Grid : MonoBehaviour
 
         InitializeGridBackgroundCells();
         InitializeFigures();
+        FindCellsOffset();
         CreateSpawnPointsAboveTheGrid();
 
         ResizeBoardAccordingToScreenSize();
-    }
-    //public float GetTheHighestCellYPosition()
-    //{
-    //    return (_yDim / 2f + 0.5f - 1f) * _cellsOffsetMultiplier;
-    //}
-
-    public float GetCellsOffset()
-    {
-        if (_xDim >= 2)
-        {
-            return Mathf.Abs((_figures[0, 0].transform.position - _figures[1, 0].transform.position).x);
-        }
-        else
-        {
-            if (_yDim >= 2)
-            {
-                return Mathf.Abs((_figures[0, 0].transform.position - _figures[0, 1].transform.position).y);
-            }
-            else
-            {
-                return 0f;
-            }
-        }
+        
+        OnGridReady?.Invoke();
     }
 
     public Vector3 GetSpawnPointPosition(int xArrayIndex)
@@ -80,7 +69,6 @@ public class Grid : MonoBehaviour
 
     private void PrepareFigureSpawner()
     {
-        //_figureSpawner.SetCenteredGridInWorldPosition(_centeredGridInWorldPosition);
         _figureSpawner.SetGridTransform(transform);
     }
 
@@ -110,10 +98,29 @@ public class Grid : MonoBehaviour
         }
     }
 
+    private void FindCellsOffset()
+    {
+        if (_xDim >= 2)
+        {
+            _cellsOffset = Mathf.Abs((_figures[0, 0].transform.position - _figures[1, 0].transform.position).x);
+        }
+        else
+        {
+            if (_yDim >= 2)
+            {
+                _cellsOffset = Mathf.Abs((_figures[0, 0].transform.position - _figures[0, 1].transform.position).y);
+            }
+            else
+            {
+                _cellsOffset = 0f;
+            }
+        }
+    }
+
     private void CreateSpawnPointsAboveTheGrid()
     {
         GameObject spawnPoint = new GameObject();
-        Vector3 cellsOffset = new Vector3(0f, GetCellsOffset(), 0f);
+        Vector3 cellsOffset = new Vector3(0f, CellsOffset, 0f);
 
         _spawnPointsPositions = new Vector3[_xDim];
 
@@ -126,15 +133,6 @@ public class Grid : MonoBehaviour
         Destroy(spawnPoint);
     }
 
-    //private void RememberFiguresMaxYPositions()
-    //{
-    //    _figuresMaxYPositions = new float[_xDim];
-
-    //    for (int x = 0; x < _xDim; x++)
-    //    {
-    //        _figuresMaxYPositions[x] = _figures[x, _yDim - 1].transform.position.y;
-    //    }
-    //}
     private void ResizeBoardAccordingToScreenSize()
     {
         gameObject.transform.localScale *= _cellsOffsetMultiplier;

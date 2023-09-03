@@ -16,11 +16,12 @@ public class Gravity : MonoBehaviour
     private int _yArrayIndexOffset = 1;
     
     private List<Figure> _figuresToFall = new List<Figure>();
+    //private List<Figure> _figuresToBeRemovedFromFallList = new List<Figure>();
     private float _cellOffset;
 
     private void Start()
     {
-        _cellOffset = _grid.GetCellsOffset();
+        _cellOffset = _grid.CellsOffset;
     }
 
     private void OnEnable()
@@ -40,7 +41,7 @@ public class Gravity : MonoBehaviour
         _yArrayIndexOffset = 1;
 
         int xMax = _grid.XDim;
-        int yMax = (_grid.Figures.GetUpperBound(1) + 1) / 2;
+        int yMax = (_grid.Figures.GetUpperBound(1) + 1) / 2;  /////////////////////////////////////////////problem
 
         for (int x = 0; x < xMax; x++)
         {
@@ -159,10 +160,16 @@ public class Gravity : MonoBehaviour
             {
                 if (HasReachedTheLowestPoint(_figuresToFall[i]) || (HasAnotherFigureBelow(_figuresToFall[i])))
                 {
+                    //_figuresToBeRemovedFromFallList.Add(_figuresToFall[i]);
                     RemoveFigureFromFallList(_figuresToFall[i]);
                     i--;
                 }
             }
+
+            //foreach (Figure figure in _figuresToBeRemovedFromFallList)
+            //{
+            //    _figuresToFall.Remove(figure);
+            //}
 
             yield return null;
         }
@@ -201,32 +208,6 @@ public class Gravity : MonoBehaviour
             figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed, 0f);
         }
     }
-
-    //private void RemoveAFigureFromFallListIfBelowIsAnother()
-    //{
-    //    for (int i = 0; i < _figuresToFall.Count; i++)
-    //    {
-    //        if (_figuresToFall[i].ArrayIndex.y > 0)
-    //        {
-    //            if (_grid.Figures[(int)_figuresToFall[i].ArrayIndex.x, (int)_figuresToFall[i].ArrayIndex.y - 1] != null)
-    //            {
-    //                _figuresToFall.Remove(_figuresToFall[i]);
-    //                i--;
-    //            }
-    //        }
-    //    }
-
-        //foreach (Figure figure in _figuresToFall)
-        //{
-        //    if (figure.ArrayIndex.y > 0)
-        //    {
-        //        if (_grid.Figures[(int)figure.ArrayIndex.x, (int)figure.ArrayIndex.y - 1] != null)
-        //        {
-        //            _figuresToFall.Remove(figure);
-        //        }
-        //    }
-        //}
-    //}
 
     private void RearrangeFigureArrayIndexes()
     {

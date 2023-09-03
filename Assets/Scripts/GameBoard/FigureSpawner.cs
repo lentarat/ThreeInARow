@@ -26,17 +26,11 @@ public class FigureSpawner : MonoBehaviour
     [SerializeField] private FigurePrefab[] _figurePrefabs;
 
     private Transform _gridTransform;
-    //private Vector2 _centeredGridInWorldPosition;
 
     private void Awake()
     {
         CopyFigurePrefabsArrayToDictionary();
     }
-
-    //public void SetCenteredGridInWorldPosition(Vector2 pos)
-    //{
-    //    _centeredGridInWorldPosition = pos;
-    //}
 
     public void SetGridTransform(Transform gridTransform)
     {

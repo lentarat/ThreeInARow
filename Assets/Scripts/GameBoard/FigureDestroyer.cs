@@ -14,12 +14,14 @@ public class FigureDestroyer : MonoBehaviour
     {
         FigureSwapper.OnFiguresSwapped += HandleFiguresMoved;
         Gravity.OnFiguresFellDown += HandleFiguresMoved;
+        //Grid.OnGridReady += HandleFiguresMoved;
     }
 
     private void OnDisable()
     {
         FigureSwapper.OnFiguresSwapped -= HandleFiguresMoved;
         Gravity.OnFiguresFellDown -= HandleFiguresMoved;
+        //Grid.OnGridReady -= HandleFiguresMoved;
     }
 
     private void HandleFiguresMoved()
