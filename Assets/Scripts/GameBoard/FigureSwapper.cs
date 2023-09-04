@@ -29,6 +29,8 @@ public class FigureSwapper : MonoBehaviour
 
     private void OnTouchHandler(Vector2 mousePosition)
     {
+        if (GameManager.Instance.CurrentGameState != GameManager.GameState.Idle) return;
+
         if (IsRaycastOnFigure(mousePosition))
         {
             _touchedFigureArrayIndex = GetFigureArrayIndex();
@@ -61,11 +63,11 @@ public class FigureSwapper : MonoBehaviour
 
     private void OnDeltaHandler(Vector2 mouseDelta)
     {
+        if (GameManager.Instance.CurrentGameState != GameManager.GameState.Idle) return;
+
         Vector2 figureOffsetToBeSwappedIndex = GetFigureOffsetToBeSwappedArrayIndex(mouseDelta);
 
-        if (LastTouchWasOnFigure() &&
-            FitsInArrayBoundaries(figureOffsetToBeSwappedIndex) &&
-            GameManager.Instance.CurrentGameState == GameManager.GameState.Idle)
+        if (LastTouchWasOnFigure() && FitsInArrayBoundaries(figureOffsetToBeSwappedIndex))
         {
             _touchedFigure = null;
             GameManager.Instance.CurrentGameState = GameManager.GameState.FiguresSwapping;

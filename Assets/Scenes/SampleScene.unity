@@ -331,8 +331,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _figureSpawner: {fileID: 1826268442}
-  _xDim: 4
-  _yDim: 4
+  _xDim: 5
+  _yDim: 8
   _cellsOffsetMultiplier: 1
   _backgroundCellPrefab: {fileID: 6275639240253089580, guid: e62cd8903fe09254dbae24b77ae76e88, type: 3}
 --- !u!114 &1826268439
@@ -348,7 +348,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 1826268438}
-  _swapSpeed: 2
+  _swapSpeed: 2.5
 --- !u!114 &1826268440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,7 +376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _grid: {fileID: 1826268438}
   _figureSpawner: {fileID: 1826268442}
-  _fallSpeed: 1.75
+  _fallSpeed: 3.5
 --- !u!114 &1826268442
 MonoBehaviour:
   m_ObjectHideFlags: 0
