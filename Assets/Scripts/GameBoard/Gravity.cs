@@ -14,7 +14,7 @@ public class Gravity : MonoBehaviour
     public static event System.Action OnFiguresFellDown;
     
     private List<Figure> _figuresToFall = new List<Figure>();
-    private float _cellOffset;
+    //private float _cellOffset;
     private int xMax;
     private int yMax;
 
@@ -22,10 +22,10 @@ public class Gravity : MonoBehaviour
 
     private void Start()
     {
-        _cellOffset = _grid.CellsOffset;
+        //_cellOffset = ;
 
         xMax = _grid.XDim;
-        yMax = (_grid.Figures.GetUpperBound(1) + 1) / 2;   /////////////////////////////////////////////problem
+        yMax = (_grid.Figures.GetUpperBound(1) + 1) / 2;
     }
 
     private void OnEnable()
@@ -52,7 +52,7 @@ public class Gravity : MonoBehaviour
             {
                 if (IsNotOccupiedByFigure(x, y))
                 {
-                    SpawnAFigureAtPosition(x, y, yMax);
+                    SpawnAFigureAtIndex(x, yMax);
 
                     startedAddingFiguresToFallList = true;
                     _yArrayIndexOffset++;
@@ -74,9 +74,9 @@ public class Gravity : MonoBehaviour
         }
     }
 
-    private void SpawnAFigureAtPosition(int x, int y, int yMax)
+    private void SpawnAFigureAtIndex(int x, int yMax)
     {
-        Vector2 spawnLocation = _grid.GetSpawnPointPosition(x) + new Vector3(0f, _cellOffset * _yArrayIndexOffset, 0f);
+        Vector2 spawnLocation = _grid.GetSpawnPointPosition(x) + new Vector3(0f, _grid.CellsOffset * _yArrayIndexOffset, 0f);
 
         Figure spawnedFigureAboveTheGrid = _figureSpawner.SpawnAFigureAtPosition(spawnLocation, Vector2.zero);
         spawnedFigureAboveTheGrid.ArrayIndex.x = x;
@@ -124,18 +124,16 @@ public class Gravity : MonoBehaviour
 
         while (_figuresToFall.Count != 0)
         {
-            while (pathPassed < _cellOffset)
+            while (pathPassed < _grid.CellsOffset)
             {
                 TranslatePositionEachFigureInFallListDown();
 
-                pathPassed += Time.deltaTime * _fallSpeed;
+                pathPassed += Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier;
 
                 yield return null;
             }
 
             pathPassed = 0f;
-
-            Debug.Log(_figuresToFall.Count);
 
             RearrangeFigureArrayIndexes();
 
@@ -182,7 +180,7 @@ public class Gravity : MonoBehaviour
     {
         foreach (Figure figure in _figuresToFall)
         {
-            figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed, 0f);
+            figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier, 0f);
         }
     }
 

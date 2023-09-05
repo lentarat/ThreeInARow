@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class FigureSpawner : MonoBehaviour
 {
+    [Header("Dependencies")]
+    [SerializeField] private Grid _grid;
+
+    [Header("Hierarchy Parent")]
+    [SerializeField] Transform _figuresParent;
+
     public enum FigureType
     {
         Octagon,
@@ -25,16 +31,17 @@ public class FigureSpawner : MonoBehaviour
 
     [SerializeField] private FigurePrefab[] _figurePrefabs;
 
-    private Transform _gridTransform;
+    //private Transform _gridTransform;
+    //private float _cellsOffsetMultiplier;
+
+    //private void OnEnable()
+    //{
+    //    Grid.OnGridReady += SetupFigureSpawner;
+    //}
 
     private void Awake()
     {
         CopyFigurePrefabsArrayToDictionary();
-    }
-
-    public void SetGridTransform(Transform gridTransform)
-    {
-        _gridTransform = gridTransform;
     }
 
     public Figure SpawnAFigureAtPosition(Vector2 position, Vector2 centeredGridOffset)
@@ -43,8 +50,8 @@ public class FigureSpawner : MonoBehaviour
         FigureType randomFigureType = GetRandomFigureType();
         _piecePrefabDictionary.TryGetValue(randomFigureType, out randomFigureToBeInstantiated);
 
-        GameObject instantiatedFigureGameObject = Instantiate(randomFigureToBeInstantiated, position + centeredGridOffset, Quaternion.identity);
-        instantiatedFigureGameObject.transform.parent = _gridTransform;
+        Vector3 figureSpawnPosition = (position + centeredGridOffset);
+        GameObject instantiatedFigureGameObject = Instantiate(randomFigureToBeInstantiated, figureSpawnPosition, Quaternion.identity, _figuresParent);
 
         Figure instantiatedFigure = instantiatedFigureGameObject.GetComponent<Figure>();
 

@@ -20,9 +20,14 @@ public class Grid : MonoBehaviour
     }
         
     [SerializeField] private float _cellsOffsetMultiplier;
+    public float CellsOffsetMultiplier => _cellsOffsetMultiplier;
 
     [Header("Background Cell Prefab")]
     [SerializeField] private GameObject _backgroundCellPrefab;
+
+    [Header("Hierarchy Parents")]
+    [SerializeField] Transform _backgroundCellsParent;
+    [SerializeField] Transform _spawnPointsCellParent;
 
     private Figure[,] _figures;
     public Figure[,] Figures
@@ -45,15 +50,16 @@ public class Grid : MonoBehaviour
     {
         CenterTheGrid();
 
-        PrepareFigureSpawner();
-
         InitializeGridBackgroundCells();
         InitializeFigures();
+
+        FindCellsOffset();
+
+        ResizeBoardAccordingToScreenSize();
+
         FindCellsOffset();
         CreateSpawnPointsAboveTheGrid();
 
-        ResizeBoardAccordingToScreenSize();
-        
         OnGridReady?.Invoke();
     }
 
@@ -65,12 +71,7 @@ public class Grid : MonoBehaviour
     private void CenterTheGrid()
     {
         _centeredGridInWorldPosition = new Vector2(transform.position.x - _xDim / 2f + 0.5f, transform.position.y - _yDim / 2f + 0.5f);
-    }
-
-    private void PrepareFigureSpawner()
-    {
-        _figureSpawner.SetGridTransform(transform);
-    }
+    } 
 
     private void InitializeGridBackgroundCells()
     {
@@ -79,7 +80,7 @@ public class Grid : MonoBehaviour
             for (int y = 0; y < _yDim; y++)
             {
                 Vector2 backgroundCellOffset = new Vector3(x, y);
-                Instantiate(_backgroundCellPrefab, _centeredGridInWorldPosition + backgroundCellOffset, Quaternion.identity, transform);
+                Instantiate(_backgroundCellPrefab, _centeredGridInWorldPosition + backgroundCellOffset, Quaternion.identity, _backgroundCellsParent);
             }
         }
     }
@@ -126,7 +127,8 @@ public class Grid : MonoBehaviour
 
         for (int x = 0; x < _xDim; x++)
         {
-            GameObject createdSpawnPoint = Instantiate(spawnPoint, _figures[x, _yDim - 1].transform.position + cellsOffset, Quaternion.identity);
+            GameObject createdSpawnPoint = Instantiate(spawnPoint, _figures[x, _yDim - 1].transform.position + cellsOffset, Quaternion.identity, _spawnPointsCellParent);
+            createdSpawnPoint.name = "Spawn Point " + x;
             _spawnPointsPositions[x] = createdSpawnPoint.transform.position;
         }
 
