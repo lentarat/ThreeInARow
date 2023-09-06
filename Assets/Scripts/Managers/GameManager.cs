@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
 
+        SetApplicationFPS();
     }
 
     private void Update()
@@ -43,7 +44,10 @@ public class GameManager : MonoBehaviour
         _timeLeft = _roundTime - Time.time;
     }
 
-    
+    private void SetApplicationFPS()
+    {
+        Application.targetFrameRate = 60;
+    }
 
     public float GetTimeLeft()
     {

@@ -22,8 +22,6 @@ public class Gravity : MonoBehaviour
 
     private void Start()
     {
-        //_cellOffset = ;
-
         xMax = _grid.XDim;
         yMax = (_grid.Figures.GetUpperBound(1) + 1) / 2;
     }
@@ -74,6 +72,11 @@ public class Gravity : MonoBehaviour
         }
     }
 
+    private bool IsNotOccupiedByFigure(int x, int y)
+    {
+        return _grid.Figures[x, y] == null;
+    }
+
     private void SpawnAFigureAtIndex(int x, int yMax)
     {
         Vector2 spawnLocation = _grid.GetSpawnPointPosition(x) + new Vector3(0f, _grid.CellsOffset * _yArrayIndexOffset, 0f);
@@ -85,11 +88,6 @@ public class Gravity : MonoBehaviour
         _grid.Figures[x, yMax + _yArrayIndexOffset] = spawnedFigureAboveTheGrid;
 
         _figuresToFall.Add(spawnedFigureAboveTheGrid);
-    }
-
-    private bool IsNotOccupiedByFigure(int x, int y)
-    {
-        return _grid.Figures[x, y] == null;
     }
 
     private void BubbleSortFiguresToFall()
@@ -118,22 +116,24 @@ public class Gravity : MonoBehaviour
         } while (swapped == true);
     }
 
+        private float _pathPassed = 0f;
     private IEnumerator ApplyGravityToFigures()
     {
-        float pathPassed = 0f;
 
         while (_figuresToFall.Count != 0)
         {
-            while (pathPassed < _grid.CellsOffset)
+            while (_pathPassed < _grid.CellsOffset)
             {
                 TranslatePositionEachFigureInFallListDown();
 
-                pathPassed += Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier;
+                _pathPassed += Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier;
 
                 yield return null;
             }
 
-            pathPassed = 0f;
+            TranslatePositionEachFigureInFallListDown();
+
+            _pathPassed = 0f;
 
             RearrangeFigureArrayIndexes();
 
@@ -156,31 +156,20 @@ public class Gravity : MonoBehaviour
         yield return null;
     }
 
-    private bool HasReachedTheLowestPoint(Figure figure) => (int)figure.ArrayIndex.y <= 0;
-
-    private bool HasAnotherFigureBelow(Figure figure) 
-    {
-        Figure figureBelow = _grid.Figures[(int)figure.ArrayIndex.x, (int)figure.ArrayIndex.y - 1];
-
-        if (figureBelow != null)
-        {
-            if (_figuresToFall.Contains(figureBelow) == false)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    private void RemoveFigureFromFallList(Figure figure)
-    {
-        _figuresToFall.Remove(figure);
-    }
-
     private void TranslatePositionEachFigureInFallListDown()
     {
         foreach (Figure figure in _figuresToFall)
         {
-            figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier, 0f);
+            //figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier, 0f);
+
+            int xIndex = (int)figure.ArrayIndex.x;
+            int yIndex = (int)figure.ArrayIndex.y;
+
+            if (_pathPassed >= 1f)
+            {
+            
+            }
+            figure.transform.position =  Vector2.Lerp(_grid.CellsPositions[xIndex, yIndex], _grid.CellsPositions[xIndex, yIndex - 1], _pathPassed);
         }
     }
 
@@ -201,5 +190,25 @@ public class Gravity : MonoBehaviour
             _grid.Figures[x, y - 1] = _grid.Figures[x, y];
             _grid.Figures[x, y] = null;
         }
+    }
+
+    private bool HasReachedTheLowestPoint(Figure figure) => (int)figure.ArrayIndex.y <= 0;
+
+    private bool HasAnotherFigureBelow(Figure figure) 
+    {
+        Figure figureBelow = _grid.Figures[(int)figure.ArrayIndex.x, (int)figure.ArrayIndex.y - 1];
+
+        if (figureBelow != null)
+        {
+            if (_figuresToFall.Contains(figureBelow) == false)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void RemoveFigureFromFallList(Figure figure)
+    {
+        _figuresToFall.Remove(figure);
     }
 }

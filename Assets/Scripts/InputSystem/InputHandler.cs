@@ -45,7 +45,6 @@ public class InputHandler : MonoBehaviour
 
     private void HandleDelta(InputAction.CallbackContext context)
     {
-        Debug.Log(_delta.ReadValue<Vector2>());
         if (_delta.ReadValue<Vector2>().sqrMagnitude < 250f) return;
 
         Vector2 mouseDelta = _delta.ReadValue<Vector2>();

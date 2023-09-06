@@ -8,16 +8,10 @@ public class Grid : MonoBehaviour
 
     [Header("Grid Size")]
     [SerializeField] private int _xDim;
-    public int XDim
-    {
-        get => _xDim;
-    }
+    public int XDim => _xDim;
 
     [SerializeField] private int _yDim;
-    public int YDim
-    {
-        get => _yDim;
-    }
+    public int YDim => _yDim;
         
     [SerializeField] private float _cellsOffsetMultiplier;
     public float CellsOffsetMultiplier => _cellsOffsetMultiplier;
@@ -30,16 +24,13 @@ public class Grid : MonoBehaviour
     [SerializeField] Transform _spawnPointsCellParent;
 
     private Figure[,] _figures;
-    public Figure[,] Figures
-    {
-        get => _figures;
-    }
+    public Figure[,] Figures => _figures;
+
+    private Vector2[,] _cellsPositions;
+    public Vector2[,] CellsPositions => _cellsPositions;
 
     private float _cellsOffset;
-    public float CellsOffset 
-    {
-        get => _cellsOffset;
-    }
+    public float CellsOffset => _cellsOffset;
 
     public static event System.Action OnGridReady;
 
@@ -58,6 +49,7 @@ public class Grid : MonoBehaviour
         ResizeBoardAccordingToScreenSize();
 
         FindCellsOffset();
+        FindCellsPositions();
         CreateSpawnPointsAboveTheGrid();
 
         OnGridReady?.Invoke();
@@ -70,28 +62,29 @@ public class Grid : MonoBehaviour
 
     private void CenterTheGrid()
     {
-        _centeredGridInWorldPosition = new Vector2(transform.position.x - _xDim / 2f + 0.5f, transform.position.y - _yDim / 2f + 0.5f);
+        _centeredGridInWorldPosition = new Vector2(transform.position.x - XDim / 2f + 0.5f, transform.position.y - YDim / 2f + 0.5f);
     } 
 
     private void InitializeGridBackgroundCells()
     {
-        for (int x = 0; x < _xDim; x++)
+        for (int x = 0; x < XDim; x++)
         {
-            for (int y = 0; y < _yDim; y++)
+            for (int y = 0; y < YDim; y++)
             {
                 Vector2 backgroundCellOffset = new Vector3(x, y);
-                Instantiate(_backgroundCellPrefab, _centeredGridInWorldPosition + backgroundCellOffset, Quaternion.identity, _backgroundCellsParent);
+                GameObject gridCell = Instantiate(_backgroundCellPrefab, _centeredGridInWorldPosition + backgroundCellOffset, Quaternion.identity, _backgroundCellsParent);
+                gridCell.isStatic = true;
             }
         }
     }
 
     private void InitializeFigures()
     {
-        _figures = new Figure[_xDim, _yDim * 2]; // multiplication by two is caused due to extra space needed for figures above the grid
+        _figures = new Figure[XDim, YDim * 2]; // multiplication by two is caused due to extra space needed for figures above the grid
 
-        for (int x = 0; x < _xDim; x++)
+        for (int x = 0; x < XDim; x++)
         {
-            for (int y = 0; y < _yDim; y++)
+            for (int y = 0; y < YDim; y++)
             {
                 Figure figure = _figureSpawner.SpawnAFigureAtPosition(new Vector2(x, y), _centeredGridInWorldPosition);
                 _figures[x, y] = figure;
@@ -101,13 +94,13 @@ public class Grid : MonoBehaviour
 
     private void FindCellsOffset()
     {
-        if (_xDim >= 2)
+        if (XDim >= 2)
         {
             _cellsOffset = Mathf.Abs((_figures[0, 0].transform.position - _figures[1, 0].transform.position).x);
         }
         else
         {
-            if (_yDim >= 2)
+            if (YDim >= 2)
             {
                 _cellsOffset = Mathf.Abs((_figures[0, 0].transform.position - _figures[0, 1].transform.position).y);
             }
@@ -118,16 +111,37 @@ public class Grid : MonoBehaviour
         }
     }
 
+    private void FindCellsPositions()
+    {
+        _cellsPositions = new Vector2[XDim, YDim * 2];
+
+        for (int x = 0; x < XDim; x++)
+        {
+            int y = 0;
+            for (; y < YDim; y++)
+            {
+                _cellsPositions[x, y] = _figures[x, y].transform.position;
+            }
+            Debug.Log(y);
+            Vector2 lastPosition = _figures[x, YDim - 1].transform.position + new Vector3(0f,CellsOffset,0f);
+            for (; y < YDim * 2; y++)
+            {
+                _cellsPositions[x, y] = lastPosition;
+                lastPosition += new Vector2(0f, CellsOffset);
+            }
+        }
+    }
+
     private void CreateSpawnPointsAboveTheGrid()
     {
         GameObject spawnPoint = new GameObject();
         Vector3 cellsOffset = new Vector3(0f, CellsOffset, 0f);
 
-        _spawnPointsPositions = new Vector3[_xDim];
+        _spawnPointsPositions = new Vector3[XDim];
 
-        for (int x = 0; x < _xDim; x++)
+        for (int x = 0; x < XDim; x++)
         {
-            GameObject createdSpawnPoint = Instantiate(spawnPoint, _figures[x, _yDim - 1].transform.position + cellsOffset, Quaternion.identity, _spawnPointsCellParent);
+            GameObject createdSpawnPoint = Instantiate(spawnPoint, _figures[x, YDim - 1].transform.position + cellsOffset, Quaternion.identity, _spawnPointsCellParent);
             createdSpawnPoint.name = "Spawn Point " + x;
             _spawnPointsPositions[x] = createdSpawnPoint.transform.position;
         }
