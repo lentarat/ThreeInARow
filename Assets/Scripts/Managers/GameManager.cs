@@ -13,15 +13,11 @@ public class GameManager : MonoBehaviour
         private set => _instance = value;
     }
 
-    [Header("Common")]
-    [SerializeField] private float _roundTime;
-
-    private float _timeLeft;
-
     public enum GameState
     {
         Idle,
         FiguresSwapping,
+        FiguresDestroying,
         FiguresFalling
     }
 
@@ -35,22 +31,5 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
-        SetApplicationFPS();
-    }
-
-    private void Update()
-    {
-        _timeLeft = _roundTime - Time.time;
-    }
-
-    private void SetApplicationFPS()
-    {
-        Application.targetFrameRate = 60;
-    }
-
-    public float GetTimeLeft()
-    {
-        return _timeLeft;
     }
 }

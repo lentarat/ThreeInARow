@@ -14,11 +14,10 @@ public class Gravity : MonoBehaviour
     public static event System.Action OnFiguresFellDown;
     
     private List<Figure> _figuresToFall = new List<Figure>();
-    //private float _cellOffset;
     private int xMax;
     private int yMax;
-
     private int _yArrayIndexOffset;
+    private float _pathPassed = 0f;
 
     private void Start()
     {
@@ -116,13 +115,12 @@ public class Gravity : MonoBehaviour
         } while (swapped == true);
     }
 
-        private float _pathPassed = 0f;
     private IEnumerator ApplyGravityToFigures()
     {
 
         while (_figuresToFall.Count != 0)
         {
-            while (_pathPassed < _grid.CellsOffset)
+            while (_pathPassed < _grid.CellsOffset / _grid.CellsOffsetMultiplier)
             {
                 TranslatePositionEachFigureInFallListDown();
 
@@ -160,15 +158,9 @@ public class Gravity : MonoBehaviour
     {
         foreach (Figure figure in _figuresToFall)
         {
-            //figure.transform.position += new Vector3(0f, -Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier, 0f);
-
             int xIndex = (int)figure.ArrayIndex.x;
             int yIndex = (int)figure.ArrayIndex.y;
 
-            if (_pathPassed >= 1f)
-            {
-            
-            }
             figure.transform.position =  Vector2.Lerp(_grid.CellsPositions[xIndex, yIndex], _grid.CellsPositions[xIndex, yIndex - 1], _pathPassed);
         }
     }

@@ -122,8 +122,9 @@ public class Grid : MonoBehaviour
             {
                 _cellsPositions[x, y] = _figures[x, y].transform.position;
             }
-            Debug.Log(y);
+
             Vector2 lastPosition = _figures[x, YDim - 1].transform.position + new Vector3(0f,CellsOffset,0f);
+
             for (; y < YDim * 2; y++)
             {
                 _cellsPositions[x, y] = lastPosition;

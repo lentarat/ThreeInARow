@@ -22,6 +22,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "DeltaPosition",
+                    "type": "Value",
+                    "id": "4bc0c649-5316-44df-ac14-c6bf67d39af2",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -38,12 +47,23 @@
                 },
                 {
                     "name": "",
-                    "id": "484dbbc2-8ec9-4bbe-8e31-84ba13e8b194",
+                    "id": "bc8f9795-7ad0-4a95-868f-d60edd62c35c",
                     "path": "<Touchscreen>/primaryTouch/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Delta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa9660c2-ea7d-4785-bb1f-1d7f1065a746",
+                    "path": "<Touchscreen>/primaryTouch/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DeltaPosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

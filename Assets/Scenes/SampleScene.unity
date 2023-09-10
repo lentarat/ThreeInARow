@@ -576,9 +576,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _figureSpawner: {fileID: 1826268442}
-  _xDim: 3
-  _yDim: 4
-  _cellsOffsetMultiplier: 1
+  _xDim: 5
+  _yDim: 5
+  _cellsOffsetMultiplier: 0.725
   _backgroundCellPrefab: {fileID: 6275639240253089580, guid: e62cd8903fe09254dbae24b77ae76e88, type: 3}
   _backgroundCellsParent: {fileID: 104840409}
   _spawnPointsCellParent: {fileID: 575449374}
@@ -609,6 +609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grid: {fileID: 1826268438}
+  _animationBeforeDestroyingDuration: 0.6
 --- !u!114 &1826268441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -772,7 +773,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdef7f87e0eb2eb47b14804333a21608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _roundTime: 10
 --- !u!4 &1880313613
 Transform:
   m_ObjectHideFlags: 0

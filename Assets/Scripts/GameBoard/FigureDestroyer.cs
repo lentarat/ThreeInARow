@@ -1,11 +1,16 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class FigureDestroyer : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Grid _grid;
 
+    [Header("Common")]
+    [SerializeField] private float _animationBeforeDestroyingDuration;
+    
     public static event System.Action OnFigureDestroyed;
 
     private List<Figure> _figuresToDestroy = new List<Figure>();
@@ -14,19 +19,25 @@ public class FigureDestroyer : MonoBehaviour
     {
         FigureSwapper.OnFiguresSwapped += HandleFiguresMoved;
         Gravity.OnFiguresFellDown += HandleFiguresMoved;
-        //Grid.OnGridReady += HandleFiguresMoved;
     }
 
     private void OnDisable()
     {
         FigureSwapper.OnFiguresSwapped -= HandleFiguresMoved;
         Gravity.OnFiguresFellDown -= HandleFiguresMoved;
-        //Grid.OnGridReady -= HandleFiguresMoved;
     }
 
     private void HandleFiguresMoved()
     {
+        
+
         AddFiguresToDestroyList();
+
+        if (_figuresToDestroy.Count > 0)
+        {
+            StartCoroutine(DestroyFigures());
+        }
+
     }
 
     private void AddFiguresToDestroyList()
@@ -45,15 +56,6 @@ public class FigureDestroyer : MonoBehaviour
                     AddToListThreeOrMoreFiguresConsistent(x, y);
                 }
             }
-        }
-
-        if (_figuresToDestroy.Count > 0)
-        {
-            RemoveFiguresInArray();
-
-            DestroyFigures();
-
-            OnFigureDestroyed?.Invoke();
         }
     }
 
@@ -90,7 +92,6 @@ public class FigureDestroyer : MonoBehaviour
                 {
                     _figuresToDestroy.Add(figure);
                 }
-                //_grid.Figures[x + j, y].ToBeDestroyed = true;
             }
         }
 
@@ -121,18 +122,51 @@ public class FigureDestroyer : MonoBehaviour
                 {
                     _figuresToDestroy.Add(figure);
                 }
-                //_grid.Figures[x, y + j].ToBeDestroyed = true;
             }
         }
     }
 
-    private void DestroyFigures()
+    private IEnumerator DestroyFigures()
     {
-        foreach(Figure figureToBeDestroyed in _figuresToDestroy)
+        GameManager.Instance.CurrentGameState = GameManager.GameState.FiguresDestroying;
+
+        ShowDeathAnimation();
+
+        //float counter = 0f;
+
+        //while (counter < _animationBeforeDestroyingDuration)
+        //{
+        //    counter += Time.deltaTime;
+
+        //    Debug.Log("Destroyer " + GameManager.Instance.CurrentGameState);
+
+        //    if (GameManager.Instance.CurrentGameState == GameManager.GameState.FiguresDestroying)
+        //    {
+            
+        //    }
+
+        //    yield return null;
+        //}
+
+
+        yield return new WaitForSeconds(_animationBeforeDestroyingDuration);
+
+        RemoveFiguresInArray();
+        DestroyEachFigure();
+
+        GameManager.Instance.CurrentGameState = GameManager.GameState.Idle;
+
+        OnFigureDestroyed?.Invoke();
+    }
+
+    private void ShowDeathAnimation()
+    {
+        foreach (Figure figureToBeDestroyedAfterAnimation in _figuresToDestroy)
         {
-            Destroy(figureToBeDestroyed.gameObject);
+            figureToBeDestroyedAfterAnimation.transform.DOScale(0f, _animationBeforeDestroyingDuration);
         }
     }
+
     private void RemoveFiguresInArray()
     {
         foreach (Figure figureToBeDestroyed in _figuresToDestroy)
@@ -141,6 +175,14 @@ public class FigureDestroyer : MonoBehaviour
             int y = (int)figureToBeDestroyed.ArrayIndex.y;
 
             _grid.Figures[x, y] = null;
+        }
+    }
+
+    private void DestroyEachFigure()
+    {
+        foreach (Figure figureToBeDestroyed in _figuresToDestroy)
+        {
+            Destroy(figureToBeDestroyed.gameObject);
         }
     }
 }

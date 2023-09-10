@@ -24,7 +24,7 @@ public class FigureSwapper : MonoBehaviour
     private void OnDisable()
     {
         InputHandler.OnTouch -= OnTouchHandler;
-        InputHandler.OnDelta += OnDeltaHandler;
+        InputHandler.OnDelta -= OnDeltaHandler;
     }
 
     private void OnTouchHandler(Vector2 mousePosition)
@@ -78,25 +78,30 @@ public class FigureSwapper : MonoBehaviour
 
     private Vector2 GetFigureOffsetToBeSwappedArrayIndex(Vector2 mouseDelta)
     {
-        if (mouseDelta.x > 0f)
+        float x = mouseDelta.x;
+        float y = mouseDelta.y;
+
+        if (Mathf.Abs(x) > Mathf.Abs(y))
         {
-            return Vector2.right;
-        }
-        else if (mouseDelta.x < 0f)
-        {
-            return Vector2.left;
-        }
-        else if (mouseDelta.y > 0f)
-        {
-            return Vector2.up;
-        }
-        else if (mouseDelta.y < 0f)
-        {
-            return Vector2.down;
+            if (x > 0)
+            {
+                return Vector2.right;
+            }
+            else
+            {
+                return Vector2.left;
+            }
         }
         else
         {
-            return Vector2.zero;
+            if (y > 0)
+            {
+                return Vector2.up;
+            }
+            else
+            {
+                return Vector2.down;
+            }
         }
     }
 
@@ -114,7 +119,7 @@ public class FigureSwapper : MonoBehaviour
 
     private bool FitsInArrayBoundaries(Vector2 pullDirection)
     {
-        if (pullDirection.x > 0f && _touchedFigureArrayIndex.x >= _grid.Figures.GetUpperBound(0))
+        if (pullDirection.x > 0f && _touchedFigureArrayIndex.x >= _grid.XDim - 1)
         {
             return false;
         }
@@ -122,7 +127,7 @@ public class FigureSwapper : MonoBehaviour
         {
             return false;
         }
-        else if (pullDirection.y > 0f && _touchedFigureArrayIndex.y >= _grid.Figures.GetUpperBound(1))
+        else if (pullDirection.y > 0f && _touchedFigureArrayIndex.y >= _grid.YDim - 1)
         {
             return false;
         }
