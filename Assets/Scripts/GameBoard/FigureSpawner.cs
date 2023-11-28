@@ -46,6 +46,8 @@ public class FigureSpawner : MonoBehaviour
 
     public Figure SpawnAFigureAtPosition(Vector2 position, Vector2 centeredGridOffset)
     {
+        position /= _grid.CubeTranform.localScale.x;
+
         GameObject randomFigureToBeInstantiated;
         FigureType randomFigureType = GetRandomFigureType();
         _piecePrefabDictionary.TryGetValue(randomFigureType, out randomFigureToBeInstantiated);
@@ -53,8 +55,10 @@ public class FigureSpawner : MonoBehaviour
         Vector3 figureSpawnPosition = (position + centeredGridOffset);
         GameObject instantiatedFigureGameObject = Instantiate(randomFigureToBeInstantiated, figureSpawnPosition, Quaternion.identity, _figuresParent);
 
-        Figure instantiatedFigure = instantiatedFigureGameObject.GetComponent<Figure>();
+        instantiatedFigureGameObject.transform.localScale /= _grid.CubeTranform.localScale.x;
 
+        Figure instantiatedFigure = instantiatedFigureGameObject.GetComponent<Figure>();
+        
         instantiatedFigure.FigureType = randomFigureType;
         instantiatedFigure.ArrayIndex = new Vector2(position.x, position.y);
 

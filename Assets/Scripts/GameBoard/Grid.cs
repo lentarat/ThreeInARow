@@ -13,8 +13,12 @@ public class Grid : MonoBehaviour
     [SerializeField] private int _yDim;
     public int YDim => _yDim;
         
-    [SerializeField] private float _cellsOffsetMultiplier;
-    public float CellsOffsetMultiplier => _cellsOffsetMultiplier;
+    //[SerializeField] private float _cellsOffsetMultiplier;
+    //public float CellsOffsetMultiplier
+    //{
+    //    get => _cellsOffsetMultiplier;
+    //    set => _cellsOffsetMultiplier = value;
+    //}
 
     [Header("Background Cell Prefab")]
     [SerializeField] private GameObject _backgroundCellPrefab;
@@ -37,16 +41,24 @@ public class Grid : MonoBehaviour
     private Vector3[] _spawnPointsPositions;
     private Vector2 _centeredGridInWorldPosition;
 
+
+    [SerializeField] private Transform _cubeTransform;
+    public Transform CubeTranform => _cubeTransform;
+
     private void Start()
     {
+        //Vector2 _cubeSize;
+        //_cubeSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
+        //_cubeSize.y = _cubeSize.x;
+        //_cubeTransform.transform.localScale *= _cubeSize * 2f;
+
+
         CenterTheGrid();
 
         InitializeGridBackgroundCells();
         InitializeFigures();
 
-        FindCellsOffset();
-
-        ResizeBoardAccordingToScreenSize();
+        //ResizeBoardAccordingToScreenSize();
 
         FindCellsOffset();
         FindCellsPositions();
@@ -150,8 +162,8 @@ public class Grid : MonoBehaviour
         Destroy(spawnPoint);
     }
 
-    private void ResizeBoardAccordingToScreenSize()
-    {
-        gameObject.transform.localScale *= _cellsOffsetMultiplier;
-    }
+    //private void ResizeBoardAccordingToScreenSize()
+    //{
+    //    gameObject.transform.localScale *= _cellsOffsetMultiplier;
+    //}
 }

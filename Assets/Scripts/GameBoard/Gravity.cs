@@ -78,7 +78,7 @@ public class Gravity : MonoBehaviour
 
     private void SpawnAFigureAtIndex(int x, int yMax)
     {
-        Vector2 spawnLocation = _grid.GetSpawnPointPosition(x) + new Vector3(0f, _grid.CellsOffset * _yArrayIndexOffset, 0f);
+        Vector2 spawnLocation = (_grid.GetSpawnPointPosition(x) + new Vector3(0f, _grid.CellsOffset * _yArrayIndexOffset, 0f)) / _grid.CubeTranform.localScale.x;
 
         Figure spawnedFigureAboveTheGrid = _figureSpawner.SpawnAFigureAtPosition(spawnLocation, Vector2.zero);
         spawnedFigureAboveTheGrid.ArrayIndex.x = x;
@@ -120,11 +120,11 @@ public class Gravity : MonoBehaviour
 
         while (_figuresToFall.Count != 0)
         {
-            while (_pathPassed < _grid.CellsOffset / _grid.CellsOffsetMultiplier)
+            while (_pathPassed < _grid.CellsOffset /*/ _grid.CellsOffsetMultiplier*/)
             {
                 TranslatePositionEachFigureInFallListDown();
 
-                _pathPassed += Time.deltaTime * _fallSpeed * _grid.CellsOffsetMultiplier;
+                _pathPassed += Time.deltaTime * _fallSpeed/* * _grid.CellsOffsetMultiplier*/;
 
                 yield return null;
             }
