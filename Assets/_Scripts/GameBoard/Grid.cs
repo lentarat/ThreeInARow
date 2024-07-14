@@ -12,20 +12,15 @@ public class Grid : MonoBehaviour
 
     [SerializeField] private int _yDim;
     public int YDim => _yDim;
-        
-    //[SerializeField] private float _cellsOffsetMultiplier;
-    //public float CellsOffsetMultiplier
-    //{
-    //    get => _cellsOffsetMultiplier;
-    //    set => _cellsOffsetMultiplier = value;
-    //}
 
     [Header("Background Cell Prefab")]
     [SerializeField] private GameObject _backgroundCellPrefab;
 
     [Header("Hierarchy Parents")]
-    [SerializeField] Transform _backgroundCellsParent;
-    [SerializeField] Transform _spawnPointsCellParent;
+    [SerializeField] private Transform _differentScreensViewportFitterTransform;
+    public Transform DifferentScreensViewportFitterTransform => _differentScreensViewportFitterTransform;
+    [SerializeField] private Transform _backgroundCellsParent;
+    [SerializeField] private Transform _spawnPointsCellParent;
 
     private Figure[,] _figures;
     public Figure[,] Figures => _figures;
@@ -47,22 +42,16 @@ public class Grid : MonoBehaviour
 
     private void Start()
     {
-        //Vector2 _cubeSize;
-        //_cubeSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
-        //_cubeSize.y = _cubeSize.x;
-        //_cubeTransform.transform.localScale *= _cubeSize * 2f;
-
-
         CenterTheGrid();
 
         InitializeGridBackgroundCells();
         InitializeFigures();
 
-        //ResizeBoardAccordingToScreenSize();
-
         FindCellsOffset();
         FindCellsPositions();
         CreateSpawnPointsAboveTheGrid();
+
+        FitInAllScreens();
 
         OnGridReady?.Invoke();
     }
@@ -92,7 +81,7 @@ public class Grid : MonoBehaviour
 
     private void InitializeFigures()
     {
-        _figures = new Figure[XDim, YDim * 2]; // multiplication by two is caused due to extra space needed for figures above the grid
+        _figures = new Figure[XDim, YDim * 2];
 
         for (int x = 0; x < XDim; x++)
         {
@@ -162,8 +151,8 @@ public class Grid : MonoBehaviour
         Destroy(spawnPoint);
     }
 
-    //private void ResizeBoardAccordingToScreenSize()
-    //{
-    //    gameObject.transform.localScale *= _cellsOffsetMultiplier;
-    //}
+    private void FitInAllScreens()
+    {
+        _cubeTransform.parent = _differentScreensViewportFitterTransform;
+    }
 }

@@ -12,8 +12,24 @@ public class FigureDestroyer : MonoBehaviour
     [SerializeField] private float _animationBeforeDestroyingDuration;
     
     public static event System.Action OnFigureDestroyed;
+    public static event System.Action<int> OnScoreValueChanged;
 
     private List<Figure> _figuresToDestroy = new List<Figure>();
+    public int TotalFiguresDestroyed { get;  private set; }
+
+    private void OnDestroy()
+    {
+        SaveScore();
+    }
+
+    private void SaveScore()
+    {
+        int previousMaxScoreAchieved = SaveLoadSystem.GetInt(SaveLoadSystem.VariablesNameTypes.MaxScore);
+        if (TotalFiguresDestroyed > previousMaxScoreAchieved)
+        { 
+            SaveLoadSystem.SaveInt(SaveLoadSystem.VariablesNameTypes.MaxScore, TotalFiguresDestroyed);
+        }
+    }
 
     private void OnEnable()
     {
@@ -29,15 +45,12 @@ public class FigureDestroyer : MonoBehaviour
 
     private void HandleFiguresMoved()
     {
-        
-
         AddFiguresToDestroyList();
 
         if (_figuresToDestroy.Count > 0)
         {
             StartCoroutine(DestroyFigures());
         }
-
     }
 
     private void AddFiguresToDestroyList()
@@ -132,27 +145,11 @@ public class FigureDestroyer : MonoBehaviour
 
         ShowDeathAnimation();
 
-        //float counter = 0f;
-
-        //while (counter < _animationBeforeDestroyingDuration)
-        //{
-        //    counter += Time.deltaTime;
-
-        //    Debug.Log("Destroyer " + GameManager.Instance.CurrentGameState);
-
-        //    if (GameManager.Instance.CurrentGameState == GameManager.GameState.FiguresDestroying)
-        //    {
-            
-        //    }
-
-        //    yield return null;
-        //}
-
-
         yield return new WaitForSeconds(_animationBeforeDestroyingDuration);
 
         RemoveFiguresInArray();
         DestroyEachFigure();
+        AddScore();
 
         GameManager.Instance.CurrentGameState = GameManager.GameState.Idle;
 
@@ -184,5 +181,11 @@ public class FigureDestroyer : MonoBehaviour
         {
             Destroy(figureToBeDestroyed.gameObject);
         }
+    }
+
+    private void AddScore()
+    {
+        TotalFiguresDestroyed += _figuresToDestroy.Count;
+        OnScoreValueChanged?.Invoke(TotalFiguresDestroyed);
     }
 }

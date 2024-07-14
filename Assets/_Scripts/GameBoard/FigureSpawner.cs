@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class FigureSpawner : MonoBehaviour
 {
@@ -50,12 +51,17 @@ public class FigureSpawner : MonoBehaviour
 
         GameObject randomFigureToBeInstantiated;
         FigureType randomFigureType = GetRandomFigureType();
+        //while (HasThreeInARowOccurred(position, randomFigureType))
+        //{
+        //    randomFigureType = GetAnotherFigure(randomFigureType);
+        //}
         _piecePrefabDictionary.TryGetValue(randomFigureType, out randomFigureToBeInstantiated);
 
         Vector3 figureSpawnPosition = (position + centeredGridOffset);
         GameObject instantiatedFigureGameObject = Instantiate(randomFigureToBeInstantiated, figureSpawnPosition, Quaternion.identity, _figuresParent);
 
-        instantiatedFigureGameObject.transform.localScale /= _grid.CubeTranform.localScale.x;
+        //instantiatedFigureGameObject.transform.localScale /= _grid.CubeTranform.localScale.x;///////////
+        //instantiatedFigureGameObject.transform.localScale *= _grid.CubeTranform.localScale.x;///////////
 
         Figure instantiatedFigure = instantiatedFigureGameObject.GetComponent<Figure>();
         
@@ -69,6 +75,34 @@ public class FigureSpawner : MonoBehaviour
     {
         int randomFigureTypeNumber = Random.Range(0, (int)FigureType.Count);
         return (FigureType)randomFigureTypeNumber;
+    }
+
+    private bool HasThreeInARowOccurred(Vector2 position, FigureType figureType)
+    {
+        int xMaxIndexInclusive = _grid.XDim - 3;
+        int yMaxIndexInclusive = _grid.YDim - 3;
+
+        int sameFiguresInARow = 1;
+
+        Vector2Int positionInt = new Vector2Int((int)position.x, (int)position.y);
+
+        //if(positionInt.x )
+        if (positionInt.x <= xMaxIndexInclusive)
+        {
+            if (_grid.Figures[positionInt.x + 1, positionInt.y].FigureType == figureType &&
+                _grid.Figures[positionInt.x + 2, positionInt.y].FigureType == figureType)
+                return true;
+        }
+        if (positionInt.y <= yMaxIndexInclusive)
+        { }
+
+        return true;
+        //undone
+    }
+
+    private FigureType GetAnotherFigure(FigureType lastFigure)
+    {
+        return lastFigure + 1;
     }
 
     private void CopyFigurePrefabsArrayToDictionary()
